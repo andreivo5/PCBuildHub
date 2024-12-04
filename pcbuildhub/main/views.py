@@ -1,6 +1,9 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from main.models import CPU, GPU
 
 def main_page(request):
-    return HttpResponse("Welcome to PCBuildHub!")
+    cpus = CPU.objects.all()
+    gpus = GPU.objects.all()
+
+    return render(request, 'home.html', {'cpus': cpus, 'gpus': gpus})
 
