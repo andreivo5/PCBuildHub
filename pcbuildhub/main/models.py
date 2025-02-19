@@ -30,3 +30,17 @@ class GPU(models.Model):
 
     def __str__(self):
         return self.gpu_name
+    
+class HDD(models.Model):
+    drive_name = models.CharField(max_length=255)
+    size = models.CharField(max_length=50)
+    disk_mark = models.IntegerField()
+    type = models.CharField(max_length=50)
+
+    class Meta:
+        verbose_name = "HDD"
+        verbose_name_plural = "HDDs"
+
+    def __str__(self):
+        return f"{self.drive_name} ({self.size})"
+
