@@ -13,9 +13,6 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 import os
 
-# Setting my own local GDAL path to avoid errors
-GDAL_LIBRARY_PATH = os.environ.get('GDAL_LIBRARY_PATH', r'C:\Users\blaze\.conda\envs\pcbuildhub\Library\bin\gdal.dll')
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -79,16 +76,18 @@ WSGI_APPLICATION = 'pcbuildhub.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
-'default': {
-    'ENGINE': 'django.contrib.gis.db.backends.postgis',
-    'NAME': 'gis',
-    'HOST': 'localhost',
-    'USER': 'docker',
-    'PASSWORD': 'docker',
-    'PORT': 25432
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'pcbuildhubdb',
+        'USER': 'testuser',
+        'PASSWORD': 'wSTDIqQNilv78IUa7kzURRT9162FbB0a',
+        'HOST': 'dpg-cuqit4lumphs73ervf2g-a.frankfurt-postgres.render.com',
+        'PORT': '5432',
+        'OPTIONS': {
+            'sslmode': 'require',
+        },
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
