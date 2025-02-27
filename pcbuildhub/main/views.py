@@ -1,9 +1,8 @@
 from django.shortcuts import render
-from main.models import CPU, GPU, HDD
+from main.models import CPU, GPU
 
 def main_page(request):
-    cpus = CPU.objects.all()
-    gpus = GPU.objects.all()
-    hdds = HDD.objects.all()
+    return render(request, 'home.html')
 
-    return render(request, 'home.html', {'cpus': cpus, 'gpus': gpus, 'hdds': hdds})
+def create_build(request):
+    return render(request, 'create.html')

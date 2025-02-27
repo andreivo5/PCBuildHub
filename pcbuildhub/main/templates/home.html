@@ -3,183 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PCBuildHub - View All</title>
-    <!-- Link to Bootstrap CSS for styling -->
+    <title>PCBuildHub - Home</title>
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
+        /* General Styling */
         body {
-            background-color:rgb(246, 244, 252);
-            font-family: 'Inter', sans-serif;
-            color: #333;
-        }
-        .container {
-            margin-top: 30px;
-            padding: 20px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        h1 {
-            font-weight: 600;
-            color: #2c3e50;
+            background-color: rgb(231, 236, 255);
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
             text-align: center;
         }
-        h3 {
-            color: #34495e;
-            font-weight: 500;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #dfe6e9;
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
         }
-        .table {
-            background: #ffffff;
-            border-radius: 8px;
-            overflow: hidden;
+        h1 {
+            color: #2c3e50;
+            font-weight: 600;
         }
-        .scrollable-table {
-            max-height: 400px;
-            overflow-y: auto;
+        .btn-primary {
+            background-color: #2980b9;
+            border: none;
+            padding: 12px 20px;
+            font-size: 18px;
+            border-radius: 5px;
+            transition: 0.3s;
         }
-        table thead th {
-            background-color:rgb(78, 44, 172) !important;
-            color: white;
-            position: sticky;
-            top: 0;
-            z-index: 1;
+        .btn-primary:hover {
+            background-color: #1f6690;
         }
-        table tbody tr:hover {
-            background-color: #ecf0f1;
-        }
-    </style>    
+    </style>
 </head>
 <body>
     <div class="container">
-        <h1 class="text-center my-4">PCBuildHub | View All</h1>
-
-        <div class="row">
-            <!-- CPU Section -->
-            <div class="col-md-12">
-                <h3 data-bs-toggle="collapse" href="#cpuTable" role="button" aria-expanded="true">CPU <span class="float-end">▼</span></h3>
-                <div class="collapse show" id="cpuTable">
-                    <div class="scrollable-table">
-                        <table class="table table-striped table-responsive">
-                            <thead>
-                                <tr>
-                                    <th>CPU Name</th>
-                                    <th>Cores</th>
-                                    <th>CPU Mark</th>
-                                    <th>Thread Mark</th>
-                                    <th>TDP</th>
-                                    <th>Socket</th>
-                                    <th>Category</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for cpu in cpus %}
-                                <tr>
-                                    <td>{{ cpu.cpu_name }}</td>
-                                    <td>{{ cpu.cores }}</td>
-                                    <td>{{ cpu.cpu_mark }}</td>
-                                    <td>{{ cpu.thread_mark }}</td>
-                                    <td>{{ cpu.tdp }}</td>
-                                    <td>{{ cpu.socket }}</td>
-                                    <td>{{ cpu.category }}</td>
-                                </tr>
-                                {% empty %}
-                                <tr>
-                                    <td colspan="7">No CPUs available at the moment.</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- GPU Section -->
-            <div class="col-md-12 mt-4">
-                <h3 data-bs-toggle="collapse" href="#gpuTable" role="button" aria-expanded="true">GPU <span class="float-end">▼</span></h3>
-                <div class="collapse show" id="gpuTable">
-                    <div class="scrollable-table">
-                        <table class="table table-striped table-responsive">
-                            <thead>
-                                <tr>
-                                    <th>GPU Name</th>
-                                    <th>3D Mark</th>
-                                    <th>2D Mark</th>
-                                    <th>TDP</th>
-                                    <th>VRAM (GB)</th>
-                                    <th>Category</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for gpu in gpus %}
-                                <tr>
-                                    <td>{{ gpu.gpu_name }}</td>
-                                    <td>{{ gpu.g3d_mark }}</td>
-                                    <td>{{ gpu.g2d_mark }}</td>
-                                    <td>{{ gpu.tdp }}</td>
-                                    <td>{{ gpu.vram }}</td>
-                                    <td>{{ gpu.category }}</td>
-                                </tr>
-                                {% empty %}
-                                <tr>
-                                    <td colspan="6">No GPUs available at the moment.</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-        <!-- HDD Section -->
-        <div class="col-md-12 mt-4">
-            <h3 data-bs-toggle="collapse" href="#hddTable" role="button" aria-expanded="true">Storage (HDDs & SSDs) <span class="float-end">▼</span></h3>
-            <div class="collapse show" id="hddTable">
-                <div class="scrollable-table">
-                    <table class="table table-striped table-responsive">
-                        <thead>
-                            <tr>
-                                <th>Drive Name</th>
-                                <th>Size</th>
-                                <th>Disk Mark</th>
-                                <th>Type</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for hdd in hdds %}
-                            <tr>
-                                <td>{{ hdd.drive_name }}</td>
-                                <td>{{ hdd.size }}</td>
-                                <td>{{ hdd.disk_mark }}</td>
-                                <td>{{ hdd.type }}</td>
-                            </tr>
-                            {% empty %}
-                            <tr>
-                                <td colspan="4">No Storage devices available at the moment.</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div> 
-
-    <script>
-        document.querySelectorAll('h3[data-bs-toggle="collapse"]').forEach(header => {
-            header.addEventListener('click', function () {
-                let icon = this.querySelector('span');
-                if (this.getAttribute('aria-expanded') === "true") {
-                    icon.innerHTML = "▼";
-                } else {
-                    icon.innerHTML = "▲";
-                }
-            });
-        });
-    </script>
-
-    <!-- Link to Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+        <h1>Welcome to PCBuildHub</h1>
+        <p>Start your custom PC build now.</p>
+        <a href="{% url 'create_build' %}" class="btn btn-primary">Create New Build</a>
+    </div>
 </body>
 </html>

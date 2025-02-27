@@ -1,11 +1,10 @@
 import csv
 from pathlib import Path
-from main.models import CPU, GPU, HDD
+from main.models import CPU, GPU
 
 base_dir = Path(__file__).resolve().parent
-CPU_CSV_PATH = base_dir / 'data' / 'passmark_CPU.csv'
-GPU_CSV_PATH = base_dir / 'data' / 'passmark_GPU.csv'
-HDD_CSV_PATH = base_dir / 'data' / 'passmark_HDD.csv'
+CPU_CSV_PATH = base_dir / 'data' / 'newpassmark_CPU.csv'
+GPU_CSV_PATH = base_dir / 'data' / 'newpassmark_GPU.csv'
 
 def safe_int(value):
     if value == "NA" or value == "" or value is None:
@@ -14,6 +13,12 @@ def safe_int(value):
         return int(value)
     except ValueError:
         return None
+    
+def clean_vram(value):
+    """Removes ' MB' and converts to int"""
+    if value and "MB" in value:
+        return safe_int(value.replace(" MB", "").strip())
+    return safe_int(value)
 
 def import_cpu_data():
     with open(CPU_CSV_PATH, 'r') as file:
@@ -44,41 +49,23 @@ def import_gpu_data():
                 g3d_mark=safe_int(row['g3d_mark']),
                 g2d_mark=safe_int(row['g2d_mark']),
                 tdp=safe_int(row['tdp']),
-                vram=safe_int(row['vram']),
+                vram=clean_vram(row['vram']),
                 category=row['category']
             ))
         GPU.objects.bulk_create(gpu_objects)
     print("GPU data loaded successfully!")
 
-def import_hdd_data():
-    with open(HDD_CSV_PATH, 'r', encoding='utf-8') as file:
-        reader = csv.DictReader(file)
-        hdd_objects = []
-
-        for row in reader:
-            print(f"Processing HDD: {row['drive_name']} with size {row['size']}")
-
-            hdd_objects.append(HDD(
-                drive_name=row['drive_name'],
-                size=row['size'],
-                disk_mark=safe_int(row['disk_mark']),
-                type=row['type']
-            ))
-
-        
-        HDD.objects.bulk_create(hdd_objects)
-    print("HDD data loaded successfully!")
 
 def run():
     print("Clearing existing data...")
     CPU.objects.all().delete()
     GPU.objects.all().delete()
-    HDD.objects.all().delete()
+    
 
     print("Importing new data...")
     import_cpu_data()
     import_gpu_data()
-    import_hdd_data()
+    
 
     print("All data loaded successfully!")
 
