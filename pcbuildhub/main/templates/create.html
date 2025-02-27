@@ -5,12 +5,116 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create a New Build | PCBuildHub</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: rgb(231, 236, 255);
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            margin-top: 40px;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+        }
+        h1 {
+            color: #2c3e50;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .table th {
+            background-color: #2980b9 !important;
+            color: white;
+            text-align: center;
+        }
+        .table td {
+            text-align: center;
+        }
+        .btn-primary {
+            background-color: #2980b9;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+        .btn-primary:hover {
+            background-color: #1f6690;
+        }
+        .btn-secondary {
+            margin-top: 20px;
+            display: block;
+            width: 100%;
+        }
+    </style>
 </head>
 <body>
-    <div class="container text-center mt-5">
+    <div class="container">
         <h1>Create Your PC Build</h1>
-        <p>Select your components and start building your custom PC.</p>
+        <p class="text-center">Select each component to start building your custom PC.</p>
 
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Component</th>
+                    <th>Select</th>
+                    <th>Price</th>
+                    <th>Link</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>CPU</td>
+                    <td><a href="{% url 'cpu_list' %}" class="btn btn-primary">Select your CPU</a></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>GPU</td>
+                    <td><a href="{% url 'gpu_list' %}" class="btn btn-primary">Select your GPU</a></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>CPU Cooler</td>
+                    <td><a href="#" class="btn btn-primary">Select your CPU Cooler</a></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Motherboard</td>
+                    <td><a href="#" class="btn btn-primary">Select your Motherboard</a></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>RAM</td>
+                    <td><a href="#" class="btn btn-primary">Select your RAM</a></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Storage</td>
+                    <td><a href="#" class="btn btn-primary">Select your Storage</a></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Case</td>
+                    <td><a href="#" class="btn btn-primary">Select your Case</a></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Power Supply</td>
+                    <td><a href="#" class="btn btn-primary">Select your Power Supply</a></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
         <a href="{% url 'home' %}" class="btn btn-secondary">Back to Home</a>
     </div>
 </body>

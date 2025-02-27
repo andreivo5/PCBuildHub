@@ -23,7 +23,7 @@ def clean_vram(value):
 def import_cpu_data():
     with open(CPU_CSV_PATH, 'r') as file:
         reader = csv.DictReader(file)
-        cpu_objects = []  # Store objects in a list
+        cpu_objects = []
 
         for row in reader:
             cpu_objects.append(CPU(
