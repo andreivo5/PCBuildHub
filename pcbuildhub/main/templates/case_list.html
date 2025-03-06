@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CPU List | PCBuildHub</title>
+    <title>Case List | PCBuildHub</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
     <div class="container mt-5">
-        <h1 class="text-center">Available CPUs</h1>
+        <h1 class="text-center">Available PC Cases</h1>
         <div class="d-flex justify-content-end mb-3">
             <label for="perPageSelect" class="me-2">Show:</label>
             <select id="perPageSelect" class="form-select w-auto">
@@ -24,37 +24,24 @@
                     <tr>
                         <th>Image</th>
                         <th>Name</th>
-                        <th>Brand</th>
-                        <th>Model</th>
-                        <th>Socket</th>
-                        <th>Speed (GHz)</th>
-                        <th>Cores</th>
-                        <th>Threads</th>
-                        <th>CPU Mark</th>
-                        <th>Thread Mark</th>
-                        <th>TDP (W)</th>
+                        <th>Size</th>
                         <th>Link</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for cpu in cpus %}
+                    {% for case in cases %}
                     <tr>
-                        <td><img src="{{ cpu.image }}" alt="{{ cpu.name }}" width="50"></td>
-                        <td>{{ cpu.name }}</td>
-                        <td>{{ cpu.brand }}</td>
-                        <td>{{ cpu.model }}</td>
-                        <td>{{ cpu.socket }}</td>
-                        <td>{{ cpu.speed }}</td>
-                        <td>{{ cpu.core_count }}</td>
-                        <td>{{ cpu.thread_count }}</td>
-                        <td>{{ cpu.cpu_mark }}</td>
-                        <td>{{ cpu.thread_mark }}</td>
-                        <td>{{ cpu.tdp }}</td>
-                        <td><a href="{{ cpu.url }}" target="_blank">View</a></td>
+                        <td>
+                            <img src="{{ case.image }}" alt="Case Image" width="50"
+                                 onerror="this.onerror=null; this.src='https://via.placeholder.com/50?text=No+Image';">
+                        </td>
+                        <td>{{ case.name }}</td>
+                        <td>{{ case.size }}</td>
+                        <td><a href="{{ case.url }}" target="_blank">View</a></td>
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="12" class="text-center">No CPUs available at the moment.</td>
+                        <td colspan="4" class="text-center">No Cases available at the moment.</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -65,16 +52,16 @@
             <a href="{% url 'components' %}" class="btn btn-secondary">Back to Components</a>
 
             <div>
-                {% if cpus.has_previous %}
+                {% if cases.has_previous %}
                     <a href="?per_page={{ per_page }}&page=1" class="btn btn-outline-primary">First</a>
-                    <a href="?per_page={{ per_page }}&page={{ cpus.previous_page_number }}" class="btn btn-outline-primary">Previous</a>
+                    <a href="?per_page={{ per_page }}&page={{ cases.previous_page_number }}" class="btn btn-outline-primary">Previous</a>
                 {% endif %}
 
-                <span class="mx-2">Page {{ cpus.number }} of {{ cpus.paginator.num_pages }}</span>
+                <span class="mx-2">Page {{ cases.number }} of {{ cases.paginator.num_pages }}</span>
 
-                {% if cpus.has_next %}
-                    <a href="?per_page={{ per_page }}&page={{ cpus.next_page_number }}" class="btn btn-outline-primary">Next</a>
-                    <a href="?per_page={{ per_page }}&page={{ cpus.paginator.num_pages }}" class="btn btn-outline-primary">Last</a>
+                {% if cases.has_next %}
+                    <a href="?per_page={{ per_page }}&page={{ cases.next_page_number }}" class="btn btn-outline-primary">Next</a>
+                    <a href="?per_page={{ per_page }}&page={{ cases.paginator.num_pages }}" class="btn btn-outline-primary">Last</a>
                 {% endif %}
             </div>
         </div>

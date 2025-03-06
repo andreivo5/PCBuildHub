@@ -9,39 +9,80 @@
 <body>
     <div class="container mt-5">
         <h1 class="text-center">Available GPUs</h1>
+        <div class="d-flex justify-content-end mb-3">
+            <label for="perPageSelect" class="me-2">Show:</label>
+            <select id="perPageSelect" class="form-select w-auto">
+                <option value="100" {% if per_page == "100" %}selected{% endif %}>100</option>
+                <option value="250" {% if per_page == "250" %}selected{% endif %}>250</option>
+                <option value="All" {% if per_page == "All" %}selected{% endif %}>All</option>
+            </select>
+        </div>
+
         <div class="scrollable-table">
             <table class="table table-striped table-responsive">
                 <thead>
                     <tr>
-                        <th>GPU Name</th>
+                        <th>Image</th>
+                        <th>Name</th>
+                        <th>Brand</th>
+                        <th>Model</th>
+                        <th>VRAM (GB)</th>
+                        <th>Resolution</th>
                         <th>3D Mark</th>
                         <th>2D Mark</th>
-                        <th>TDP</th>
-                        <th>VRAM (GB)</th>
-                        <th>Category</th>
+                        <th>TDP (W)</th>
+                        <th>Link</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for gpu in gpus %}
                     <tr>
-                        <td>{{ gpu.gpu_name }}</td>
+                        <td>
+                            <img src="{{ gpu.image }}" alt="GPU Image" width="50" 
+                                onerror="this.onerror=null; this.src='https://via.placeholder.com/50?text=No+Image';">
+                        </td>
+                        <td>{{ gpu.name }}</td>
+                        <td>{{ gpu.brand }}</td>
+                        <td>{{ gpu.model }}</td>
+                        <td>{{ gpu.vram_gb }}</td>
+                        <td>{{ gpu.resolution }}</td>
                         <td>{{ gpu.g3d_mark }}</td>
                         <td>{{ gpu.g2d_mark }}</td>
                         <td>{{ gpu.tdp }}</td>
-                        <td>{{ gpu.vram }}</td>
-                        <td>{{ gpu.category }}</td>
+                        <td><a href="{{ gpu.url }}" target="_blank">View</a></td>
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="6">No GPUs available at the moment.</td>
+                        <td colspan="10" class="text-center">No GPUs available at the moment.</td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
-        <div class="text-center mt-4">
+
+        <div class="d-flex justify-content-between align-items-center mt-4">
             <a href="{% url 'components' %}" class="btn btn-secondary">Back to Components</a>
+
+            <div>
+                {% if gpus.has_previous %}
+                    <a href="?per_page={{ per_page }}&page=1" class="btn btn-outline-primary">First</a>
+                    <a href="?per_page={{ per_page }}&page={{ gpus.previous_page_number }}" class="btn btn-outline-primary">Previous</a>
+                {% endif %}
+
+                <span class="mx-2">Page {{ gpus.number }} of {{ gpus.paginator.num_pages }}</span>
+
+                {% if gpus.has_next %}
+                    <a href="?per_page={{ per_page }}&page={{ gpus.next_page_number }}" class="btn btn-outline-primary">Next</a>
+                    <a href="?per_page={{ per_page }}&page={{ gpus.paginator.num_pages }}" class="btn btn-outline-primary">Last</a>
+                {% endif %}
+            </div>
         </div>
     </div>
+
+    <script>
+        document.getElementById("perPageSelect").addEventListener("change", function() {
+            window.location.href = "?per_page=" + this.value;
+        });
+    </script>
 </body>
 </html>
