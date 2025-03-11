@@ -1,8 +1,7 @@
 from django.db import models
-import uuid
 
 class PCBuild(models.Model):
-    id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, primary_key=True)
+    id = models.CharField(max_length=6, primary_key=True, unique=True)
     name = models.CharField(max_length=255, default="Untitled Build")
     cpu = models.ForeignKey('CPU', on_delete=models.SET_NULL, null=True, blank=True)
     gpu = models.ForeignKey('GPU', on_delete=models.SET_NULL, null=True, blank=True)

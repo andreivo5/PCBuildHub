@@ -25,50 +25,130 @@
             <tbody>
                 <tr>
                     <td>CPU</td>
-                    <td>{{ build.cpu.name|default:"Not Selected" }}</td>
+                    <td>
+                        {% if build.cpu %}
+                            <img src="{{ build.cpu.image }}" 
+                                 class="img-thumbnail me-2" 
+                                 style="width: 50px; height: 50px;"
+                                 onerror="this.onerror=null; this.src='https://via.placeholder.com/50';">
+                            {{ build.cpu.name }}
+                        {% else %}
+                            Not Selected
+                        {% endif %}
+                    </td>
                     <td><a href="{% url 'component_with_build' 'cpu' build.id %}" class="btn btn-primary">Choose CPU</a></td>
                 </tr>
                 <tr>
                     <td>GPU</td>
-                    <td>{{ build.gpu.name|default:"Not Selected" }}</td>
+                    <td>
+                        {% if build.gpu %}
+                            <img src="{{ build.gpu.image }}" 
+                                 class="img-thumbnail me-2" 
+                                 style="width: 50px; height: 50px;"
+                                 onerror="this.onerror=null; this.src='https://via.placeholder.com/50';">
+                            {{ build.gpu.name }}
+                        {% else %}
+                            Not Selected
+                        {% endif %}
+                    </td>
                     <td><a href="{% url 'component_with_build' 'gpu' build.id %}" class="btn btn-primary">Choose GPU</a></td>
                 </tr>
                 <tr>
                     <td>Motherboard</td>
-                    <td>{{ build.motherboard.name|default:"Not Selected" }}</td>
+                    <td>
+                        {% if build.motherboard %}
+                            <img src="{{ build.motherboard.image }}" 
+                                 class="img-thumbnail me-2" 
+                                 style="width: 50px; height: 50px;"
+                                 onerror="this.onerror=null; this.src='https://via.placeholder.com/50';">
+                            {{ build.motherboard.name }}
+                        {% else %}
+                            Not Selected
+                        {% endif %}
+                    </td>
                     <td><a href="{% url 'component_with_build' 'motherboard' build.id %}" class="btn btn-primary">Choose Motherboard</a></td>
                 </tr>
                 <tr>
                     <td>RAM</td>
-                    <td>{{ build.ram.name|default:"Not Selected" }}</td>
+                    <td>
+                        {% if build.ram %}
+                            <img src="{{ build.ram.image }}" 
+                                 class="img-thumbnail me-2" 
+                                 style="width: 50px; height: 50px;"
+                                 onerror="this.onerror=null; this.src='https://via.placeholder.com/50';">
+                            {{ build.ram.name }}
+                        {% else %}
+                            Not Selected
+                        {% endif %}
+                    </td>
                     <td><a href="{% url 'component_with_build' 'ram' build.id %}" class="btn btn-primary">Choose RAM</a></td>
                 </tr>
                 <tr>
                     <td>Storage</td>
-                    <td>{{ build.storage.name|default:"Not Selected" }}</td>
+                    <td>
+                        {% if build.storage %}
+                            <img src="{{ build.storage.image }}" 
+                                 class="img-thumbnail me-2" 
+                                 style="width: 50px; height: 50px;"
+                                 onerror="this.onerror=null; this.src='https://via.placeholder.com/50';">
+                            {{ build.storage.name }}
+                        {% else %}
+                            Not Selected
+                        {% endif %}
+                    </td>
                     <td><a href="{% url 'component_with_build' 'storage' build.id %}" class="btn btn-primary">Choose Storage</a></td>
                 </tr>
                 <tr>
                     <td>Case</td>
-                    <td>{{ build.case.name|default:"Not Selected" }}</td>
+                    <td>
+                        {% if build.case %}
+                            <img src="{{ build.case.image }}" 
+                                 class="img-thumbnail me-2" 
+                                 style="width: 50px; height: 50px;"
+                                 onerror="this.onerror=null; this.src='https://via.placeholder.com/50';">
+                            {{ build.case.name }}
+                        {% else %}
+                            Not Selected
+                        {% endif %}
+                    </td>
                     <td><a href="{% url 'component_with_build' 'case' build.id %}" class="btn btn-primary">Choose Case</a></td>
                 </tr>
                 <tr>
                     <td>Power Supply</td>
-                    <td>{{ build.psu.name|default:"Not Selected" }}</td>
+                    <td>
+                        {% if build.psu %}
+                            <img src="{{ build.psu.image }}" 
+                                 class="img-thumbnail me-2" 
+                                 style="width: 50px; height: 50px;"
+                                 onerror="this.onerror=null; this.src='https://via.placeholder.com/50';">
+                            {{ build.psu.name }}
+                        {% else %}
+                            Not Selected
+                        {% endif %}
+                    </td>
                     <td><a href="{% url 'component_with_build' 'psu' build.id %}" class="btn btn-primary">Choose Power Supply</a></td>
                 </tr>
                 <tr>
                     <td>Cooler</td>
-                    <td>{{ build.cooler.name|default:"Not Selected" }}</td>
+                    <td>
+                        {% if build.cooler %}
+                            <img src="{{ build.cooler.image }}" 
+                                 class="img-thumbnail me-2" 
+                                 style="width: 50px; height: 50px;"
+                                 onerror="this.onerror=null; this.src='https://via.placeholder.com/50';">
+                            {{ build.cooler.name }}
+                        {% else %}
+                            Not Selected
+                        {% endif %}
+                    </td>
                     <td><a href="{% url 'component_with_build' 'cooler' build.id %}" class="btn btn-primary">Choose Cooler</a></td>
                 </tr>
             </tbody>
-        </table>
-
+        </table>        
         <div class="text-center mt-4">
+            <a href="{% url 'new_build' %}" class="btn btn-danger">New Build</a>
             <a href="{% url 'home' %}" class="btn btn-secondary">Back to Home</a>
-        </div>
+        </div>        
     </div>
 </body>
 </html>
