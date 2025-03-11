@@ -3,119 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create a New Build | PCBuildHub</title>
+    <title>Create Build | PCBuildHub</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-color: rgb(231, 236, 255);
-            font-family: Arial, sans-serif;
-        }
-        .container {
-            margin-top: 40px;
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-            max-width: 800px;
-        }
-        h1 {
-            color: #2c3e50;
-            font-weight: 600;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .table th {
-            background-color: #2980b9 !important;
-            color: white;
-            text-align: center;
-        }
-        .table td {
-            text-align: center;
-        }
-        .btn-primary {
-            background-color: #2980b9;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
-            font-size: 14px;
-            transition: 0.3s;
-        }
-        .btn-primary:hover {
-            background-color: #1f6690;
-        }
-        .btn-secondary {
-            margin-top: 20px;
-            display: block;
-            width: 100%;
-        }
-    </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Create Your PC Build</h1>
-        <p class="text-center">Select each component to start building your custom PC.</p>
+    <div class="container mt-5">
+        <h1 class="text-center">New PC Build</h1>
+        <p><strong>Shareable Link:</strong> 
+            <a href="{{ request.build_absolute_uri }}">{{ request.build_absolute_uri }}</a>
+        </p>
 
+        <h3>Select Your Components</h3>
         <table class="table table-striped">
             <thead>
                 <tr>
                     <th>Component</th>
-                    <th>Select</th>
-                    <th>Price</th>
-                    <th>Link</th>
+                    <th>Selection</th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
                     <td>CPU</td>
-                    <td><a href="{% url 'cpu_list' %}" class="btn btn-primary">Select your CPU</a></td>
-                    <td></td>
-                    <td></td>
+                    <td>{{ build.cpu.name|default:"Not Selected" }}</td>
+                    <td><a href="{% url 'component_with_build' 'cpu' build.id %}" class="btn btn-primary">Choose CPU</a></td>
                 </tr>
                 <tr>
                     <td>GPU</td>
-                    <td><a href="{% url 'gpu_list' %}" class="btn btn-primary">Select your GPU</a></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>CPU Cooler</td>
-                    <td><a href="{% url 'cooler_list' %}" class="btn btn-primary">Select your CPU Cooler</a></td>
-                    <td></td>
-                    <td></td>
+                    <td>{{ build.gpu.name|default:"Not Selected" }}</td>
+                    <td><a href="{% url 'component_with_build' 'gpu' build.id %}" class="btn btn-primary">Choose GPU</a></td>
                 </tr>
                 <tr>
                     <td>Motherboard</td>
-                    <td><a href="{% url 'motherboard_list' %}" class="btn btn-primary">Select your Motherboard</a></td>
-                    <td></td>
-                    <td></td>
+                    <td>{{ build.motherboard.name|default:"Not Selected" }}</td>
+                    <td><a href="{% url 'component_with_build' 'motherboard' build.id %}" class="btn btn-primary">Choose Motherboard</a></td>
                 </tr>
                 <tr>
                     <td>RAM</td>
-                    <td><a href="{% url 'ram_list' %}" class="btn btn-primary">Select your RAM</a></td>
-                    <td></td>
-                    <td></td>
+                    <td>{{ build.ram.name|default:"Not Selected" }}</td>
+                    <td><a href="{% url 'component_with_build' 'ram' build.id %}" class="btn btn-primary">Choose RAM</a></td>
                 </tr>
                 <tr>
                     <td>Storage</td>
-                    <td><a href="{% url 'storage_list' %}" class="btn btn-primary">Select your Storage</a></td>
-                    <td></td>
-                    <td></td>
+                    <td>{{ build.storage.name|default:"Not Selected" }}</td>
+                    <td><a href="{% url 'component_with_build' 'storage' build.id %}" class="btn btn-primary">Choose Storage</a></td>
                 </tr>
                 <tr>
                     <td>Case</td>
-                    <td><a href="{% url 'case_list' %}" class="btn btn-primary">Select your Case</a></td>
-                    <td></td>
-                    <td></td>
+                    <td>{{ build.case.name|default:"Not Selected" }}</td>
+                    <td><a href="{% url 'component_with_build' 'case' build.id %}" class="btn btn-primary">Choose Case</a></td>
                 </tr>
                 <tr>
                     <td>Power Supply</td>
-                    <td><a href="{% url 'psu_list' %}" class="btn btn-primary">Select your Power Supply</a></td>
-                    <td></td>
-                    <td></td>
+                    <td>{{ build.psu.name|default:"Not Selected" }}</td>
+                    <td><a href="{% url 'component_with_build' 'psu' build.id %}" class="btn btn-primary">Choose Power Supply</a></td>
                 </tr>
-            </tbody>            
+                <tr>
+                    <td>Cooler</td>
+                    <td>{{ build.cooler.name|default:"Not Selected" }}</td>
+                    <td><a href="{% url 'component_with_build' 'cooler' build.id %}" class="btn btn-primary">Choose Cooler</a></td>
+                </tr>
+            </tbody>
         </table>
-        <a href="{% url 'home' %}" class="btn btn-secondary">Back to Home</a>
+
+        <div class="text-center mt-4">
+            <a href="{% url 'home' %}" class="btn btn-secondary">Back to Home</a>
+        </div>
     </div>
 </body>
 </html>

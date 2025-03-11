@@ -1,0 +1,17 @@
+{% if components.has_other_pages %}
+<nav>
+    <ul class="pagination justify-content-center">
+        {% if components.has_previous %}
+        <li class="page-item"><a class="page-link" href="?page=1&per_page={{ per_page }}">First</a></li>
+        <li class="page-item"><a class="page-link" href="?page={{ components.previous_page_number }}&per_page={{ per_page }}">Previous</a></li>
+        {% endif %}
+
+        <li class="page-item disabled"><span class="page-link">Page {{ components.number }} of {{ components.paginator.num_pages }}</span></li>
+
+        {% if components.has_next %}
+        <li class="page-item"><a class="page-link" href="?page={{ components.next_page_number }}&per_page={{ per_page }}">Next</a></li>
+        <li class="page-item"><a class="page-link" href="?page={{ components.paginator.num_pages }}&per_page={{ per_page }}">Last</a></li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
