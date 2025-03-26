@@ -39,6 +39,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'main',
+    'components',
+    'builder',
+    'smartbuilder',
+    'upgrade',
+    'prices',
 ]
 
 MIDDLEWARE = [
@@ -78,16 +83,17 @@ WSGI_APPLICATION = 'pcbuildhub.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'pcbuildhubdb',
+        'NAME': 'pcbuildhubdb_yfk9',
         'USER': 'testuser',
-        'PASSWORD': 'wSTDIqQNilv78IUa7kzURRT9162FbB0a',
-        'HOST': 'dpg-cuqit4lumphs73ervf2g-a.frankfurt-postgres.render.com',
+        'PASSWORD': 'Dz4UKcpU8xi2lL2wf6YVvvNEDY2dKhdv',
+        'HOST': 'dpg-cvhe145svqrc73b8fop0-a.oregon-postgres.render.com',
         'PORT': '5432',
         'OPTIONS': {
             'sslmode': 'require',
         },
     }
 }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators

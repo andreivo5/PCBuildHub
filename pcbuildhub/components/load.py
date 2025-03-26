@@ -1,6 +1,6 @@
 import csv
 from pathlib import Path
-from main.models import CPU, GPU, Case, Cooler, RAM, Motherboard, PSU, Storage
+from .models import CPU, GPU, Case, Cooler, RAM, Motherboard, PSU, Storage
 
 base_dir = Path(__file__).resolve().parent
 
