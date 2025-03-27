@@ -33,7 +33,7 @@ class GPU(models.Model):
     vram_gb = models.IntegerField()
     g3d_mark = models.FloatField(null=True, blank=True)
     g2d_mark = models.FloatField(null=True, blank=True)
-    tdp = models.FloatField(null=True, blank=True)
+    tdp = models.IntegerField(null=True, blank=True)
 
     class Meta:
         verbose_name = "GPU"

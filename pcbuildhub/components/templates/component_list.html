@@ -8,34 +8,127 @@
 </head>
 <body>
     <div class="container mt-5">
-        <h1 class="text-center">Available {{ component_name }}s</h1>
+        <h1 class="text-center">Available {{ component_display_name }}:</h1>
 
         <div class="table-responsive">
             <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th>Image</th>
-                        <th>Name</th>
-                        <th>More Info</th>
+                        <th></th>  <!-- image column -->
+                        {% if component_name == "Gpu" %}
+                            <th>Name</th>
+                            <th>Model</th>
+                            <th>VRAM</th>
+                            <th>TDP</th>
+                            <th>G3D Mark</th>
+                            <th>Price</th>
+                        {% elif component_name == "Cpu" %}
+                            <th>Name</th>
+                            <th>Core Count</th>
+                            <th>Speed</th>
+                            <th>Socket</th>
+                            <th>TDP</th>
+                            <th>CPU Mark</th>
+                            <th>Price</th>
+                        {% elif component_name == "Motherboard" %}
+                            <th>Name</th>
+                            <th>Socket</th>
+                            <th>Size</th>
+                            <th>Price</th>
+                        {% elif component_name == "Ram" %}
+                            <th>Name</th>
+                            <th>Type</th>
+                            <th>Size</th>
+                            <th>Price</th>
+                        {% elif component_name == "Storage" %}
+                            <th>Name</th>
+                            <th>Size</th>
+                            <th>Type</th>
+                            <th>Price</th>
+                        {% elif component_name == "Psu" %}
+                            <th>Name</th>
+                            <th>Size</th>
+                            <th>Power</th>
+                            <th>Price</th>
+                        {% elif component_name == "Case" %}
+                            <th>Name</th>
+                            <th>Size</th>
+                            <th>Price</th>
+                        {% elif component_name == "Cooler" %}
+                            <th>Name</th>
+                            <th>Type</th>
+                            <th>Price</th>
+                        {% else %}
+                            <th>Name</th>
+                        {% endif %}
                         {% if build %}<th>Action</th>{% endif %}
                     </tr>
-                </thead>
+                </thead>                
                 <tbody>
                     {% for component in components %}
                     <tr>
                         <td>
-                            <img src="{{ component.image }}" alt="No Image Available" class="img-thumbnail" style="width: 80px; height: 80px;"
+                            <img src="{{ component.image }}" alt="No Image Available" class="img-thumbnail"
+                                 style="width: 80px; height: 80px;"
                                  onerror="this.onerror=null; this.src='https://via.placeholder.com/80';">
                         </td>
-                        <td>{{ component.name }}</td>
-                        <td><a href="{{ component.url }}" target="_blank" class="btn btn-primary btn-sm">View</a></td>
+                
+                        {% if component_name == "Gpu" %}
+                            <td>{{ component.name }}</td>
+                            <td>{{ component.model }}</td>
+                            <td>{{ component.vram_gb }} GB</td>
+                            <td>{{ component.tdp }} W</td>
+                            <td>{{ component.g3d_mark }}</td>
+                            <td>{% if component.price %}€{{ component.price }}{% else %}N/A{% endif %}</td>
+                        {% elif component_name == "Cpu" %}
+                            <td>{{ component.name }}</td>
+                            <td>{{ component.core_count }}</td>
+                            <td>{{ component.speed }} GHz</td>
+                            <td>{{ component.socket }}</td>
+                            <td>{{ component.tdp }} W</td>
+                            <td>{{ component.cpu_mark }}</td>
+                            <td>{% if component.price %}€{{ component.price }}{% else %}N/A{% endif %}</td>
+                        {% elif component_name == "Motherboard" %}
+                            <td>{{ component.name }}</td>
+                            <td>{{ component.socket }}</td>
+                            <td>{{ component.size }}</td>
+                            <td>{% if component.price %}€{{ component.price }}{% else %}N/A{% endif %}</td>
+                        {% elif component_name == "Ram" %}
+                            <td>{{ component.name }}</td>
+                            <td>{{ component.type }}</td>
+                            <td>{{ component.size }} GB</td>
+                            <td>{% if component.price %}€{{ component.price }}{% else %}N/A{% endif %}</td>
+                        {% elif component_name == "Storage" %}
+                            <td>{{ component.name }}</td>
+                            <td>{{ component.space }} GB</td>
+                            <td>{{ component.type }}</td>
+                            <td>{% if component.price %}€{{ component.price }}{% else %}N/A{% endif %}</td>
+                        {% elif component_name == "Psu" %}
+                            <td>{{ component.name }}</td>
+                            <td>{{ component.size }}</td>
+                            <td>{{ component.power }} W</td>
+                            <td>{% if component.price %}€{{ component.price }}{% else %}N/A{% endif %}</td>
+                        {% elif component_name == "Case" %}
+                            <td>{{ component.name }}</td>
+                            <td>{{ component.size }}</td>
+                            <td>{% if component.price %}€{{ component.price }}{% else %}N/A{% endif %}</td>
+                        {% elif component_name == "Cooler" %}
+                            <td>{{ component.name }}</td>
+                            <td>{{ component.type }}</td>
+                            <td>{% if component.price %}€{{ component.price }}{% else %}N/A{% endif %}</td>
+                        {% else %}
+                            <td>{{ component.name }}</td>
+                        {% endif %}
+                
                         {% if build %}
-                        <td><a href="{% url 'select_component' component_name|lower build.id component.id %}" class="btn btn-success btn-sm">Select</a></td>
+                        <td>
+                            <a href="{% url 'select_component' component_name|lower build.id component.id %}" class="btn btn-success btn-sm">Select</a>
+                        </td>
                         {% endif %}
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="4" class="text-center">No {{ component_name }}s available at the moment.</td>
+                        <td colspan="8" class="text-center">No {{ component_display_name }} available at the moment.</td>
                     </tr>
                     {% endfor %}
                 </tbody>                

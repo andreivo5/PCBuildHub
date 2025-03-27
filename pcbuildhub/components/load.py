@@ -56,7 +56,7 @@ def import_gpu_data():
                 vram_gb=int(row['vram_gb']),
                 g3d_mark=float(row['g3d_mark']) if row['g3d_mark'] else None,
                 g2d_mark=float(row['g2d_mark']) if row['g2d_mark'] else None,
-                tdp=float(row['tdp']) if row['tdp'] else None
+                tdp=int(row['tdp']) if row['tdp'] else None
             ))
         GPU.objects.bulk_create(gpu_objects)
     print("GPU data loaded successfully!")

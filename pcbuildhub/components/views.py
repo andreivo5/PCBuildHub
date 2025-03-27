@@ -18,6 +18,17 @@ def component_list(request, component_type, build_id=None, component_id=None):
         'cooler': Cooler
     }
 
+    display_names = {
+        'cpu': 'CPUs',
+        'gpu': 'GPUs',
+        'motherboard': 'Motherboards',
+        'ram': 'RAM',
+        'storage': 'Storage',
+        'case': 'Cases',
+        'psu': 'PSUs',
+        'cooler': 'CPU Coolers'
+    }
+
     if component_type not in model_mapping:
         return render(request, '404.html')
 
@@ -40,5 +51,6 @@ def component_list(request, component_type, build_id=None, component_id=None):
     return render(request, 'component_list.html', {
         'components': components,
         'component_name': component_type.capitalize(),
+        'component_display_name': display_names[component_type],
         'build': build
     })
