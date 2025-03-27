@@ -4,8 +4,8 @@ from .models import CPU, GPU, Case, Cooler, RAM, Motherboard, PSU, Storage
 
 base_dir = Path(__file__).resolve().parent
 
-CPU_CSV_PATH = base_dir / 'data' / 'CPU_Performance.csv'
-GPU_CSV_PATH = base_dir / 'data' / 'GPU_Performance.csv'
+CPU_CSV_PATH = base_dir / 'data' / 'CPU.csv'
+GPU_CSV_PATH = base_dir / 'data' / 'GPU.csv'
 CASE_CSV_PATH = base_dir / 'data' / 'Case.csv'
 COOLER_CSV_PATH = base_dir / 'data' / 'Cooler.csv'
 RAM_CSV_PATH = base_dir / 'data' / 'Memory.csv'
