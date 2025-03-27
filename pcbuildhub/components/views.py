@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.core.paginator import Paginator
 from .models import CPU, GPU, Case, Cooler, RAM, Motherboard, PSU, Storage
 from builder.models import PCBuild
-from builder.compatibility import case_compatibility, psu_compatibility
+from builder.compatibility import case_compatibility, psu_compatibility, estimate_total_power
 
 def components_page(request):
     return render(request, 'components.html')
@@ -40,6 +40,11 @@ def component_list(request, component_type, build_id=None, component_id=None):
         component = get_object_or_404(model, id=component_id)
         setattr(build, component_type, component)
         build.save()
+
+        estimate_total_power(build)  
+
+        request.session['current_build'] = str(build.id)
+        
         return redirect(build.get_absolute_url())
 
     build = get_object_or_404(PCBuild, id=build_id) if build_id else None

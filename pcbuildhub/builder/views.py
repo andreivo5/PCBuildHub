@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from .models import PCBuild
 import random
 import string
+from builder.compatibility import estimate_total_power
 
 def generate_short_id():
     return ''.join(random.choices(string.ascii_letters + string.digits, k=6))
@@ -31,7 +32,26 @@ def view_build(request, build_id):
         return redirect('create_build')
 
     request.session['current_build'] = str(build.id)
-    return render(request, 'create.html', {'build': build})
+
+    total_power_draw = estimate_total_power(build)
+    psu_power = build.psu.power if build.psu else None
+
+    power_status = 'normal'
+    if psu_power:
+        usage_ratio = total_power_draw / psu_power
+        if usage_ratio > 1:
+            power_status = 'danger'
+        elif usage_ratio > 0.9:
+            power_status = 'warning'
+
+    context = {
+        'build': build,
+        'total_power_draw': total_power_draw,
+        'power_status': power_status
+    }
+
+    return render(request, 'create.html', context)
+
 
 def new_build(request):
     if 'current_build' in request.session:
