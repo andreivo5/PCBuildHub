@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ component.name }} - {{ display_name }}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-5">
+    <h5 class="text-muted">{{ display_name }}</h5>
+    <h1 class="mb-4">{{ component.name }}</h1>
+
+    <div class="row">
+        <div class="col-md-4 text-center">
+            <img src="{{ component.image }}" alt="{{ component.name }}" class="img-fluid rounded shadow-sm">
+        </div>
+        <div class="col-md-8">
+            <h4>Specifications</h4>
+            <table class="table table-striped">
+                <tbody>
+                    {% for label, value in specs.items %}
+                        <tr>
+                            <th>{{ label }}</th>
+                            <td>{{ value }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    {% if build %}
+        <form method="post" action="{% url 'select_component' component_type build.id component.id %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary mt-3">Add this {{ display_name }} to Build</button>
+        </form>
+    {% endif %}
+
+    <div class="mt-5">
+        <h4>Price Comparison</h4>
+        <p class="text-muted">(Coming soon...)</p>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Merchant</th>
+                    <th>Price</th>
+                    <th>Link</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td colspan="3" class="text-center">No price data yet.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="mt-4">
+        {% if build %}
+            <a href="{% url 'component_with_build' component_type build.id %}" class="btn btn-secondary">Back to {{ display_name }} List</a>
+        {% else %}
+            <a href="{% url 'component' component_type %}" class="btn btn-secondary">Back to {{ display_name }} List</a>
+        {% endif %}
+    </div>    
+</div>
+</body>
+</html>
