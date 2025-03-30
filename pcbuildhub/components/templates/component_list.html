@@ -9,7 +9,14 @@
 <body>
     <div class="container mt-5">
         <h1 class="text-center">Available {{ component_display_name }}:</h1>
+        <p class="text-center text-muted">{{ product_count }} Compatible Products</p>
 
+        <!-- Search Bar -->
+        <form method="GET" class="mb-3 d-flex">
+            <input type="text" name="search" class="form-control me-2" placeholder="Search {{ component_display_name }}" value="{{ request.GET.search }}">
+            <button type="submit" class="btn btn-outline-primary">Search</button>
+        </form>        
+        
         <div class="table-responsive">
             <table class="table table-striped">
                 <thead>
@@ -30,11 +37,12 @@
                             <th>TDP</th>
                             <th>CPU Mark</th>
                             <th>Price</th>
-                        {% elif component_name == "Motherboard" %}
+                            {% elif component_name == "Motherboard" %}
                             <th>Name</th>
                             <th>Socket</th>
                             <th>Size</th>
-                            <th>Price</th>
+                            <th>RAM Type</th>
+                            <th>Price</th>                        
                         {% elif component_name == "Ram" %}
                             <th>Name</th>
                             <th>Type</th>
@@ -92,7 +100,8 @@
                             <td>{{ component.name }}</td>
                             <td>{{ component.socket }}</td>
                             <td>{{ component.size }}</td>
-                            <td>{% if component.price %}€{{ component.price }}{% else %}N/A{% endif %}</td>
+                            <td>{{ component.ram_type }}</td>
+                            <td>{% if component.price %}€{{ component.price }}{% else %}N/A{% endif %}</td>                        
                         {% elif component_name == "Ram" %}
                             <td>{{ component.name }}</td>
                             <td>{{ component.type }}</td>

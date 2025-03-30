@@ -1,0 +1,122 @@
+<!-- File used for filtering logic, work in progress -->
+ 
+<form method="get" class="mb-4 d-flex flex-wrap gap-3 align-items-end">
+    {# --- Brand Filter --- #}
+    {% if filter_choices.brands %}
+        <div>
+            <label class="form-label">Brand</label>
+            <select name="brand" class="form-select">
+                <option value="">All</option>
+                {% for brand in filter_choices.brands %}
+                    <option value="{{ brand }}" {% if filters.brand == brand %}selected{% endif %}>{{ brand }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    {% endif %}
+
+    {# --- Socket Filter --- #}
+    {% if filter_choices.sockets %}
+        <div>
+            <label class="form-label">Socket</label>
+            <select name="socket" class="form-select">
+                <option value="">All</option>
+                {% for socket in filter_choices.sockets %}
+                    <option value="{{ socket }}" {% if filters.socket == socket %}selected{% endif %}>{{ socket }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    {% endif %}
+
+    {# --- RAM Type Filter --- #}
+    {% if filter_choices.ram_types %}
+        <div>
+            <label class="form-label">RAM Type</label>
+            <select name="ram_type" class="form-select">
+                <option value="">All</option>
+                {% for rt in filter_choices.ram_types %}
+                    <option value="{{ rt }}" {% if filters.ram_type == rt %}selected{% endif %}>{{ rt }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    {% endif %}
+
+    {# --- VRAM Filter --- #}
+    {% if filter_choices.vrams %}
+        <div>
+            <label class="form-label">VRAM</label>
+            <select name="vram" class="form-select">
+                <option value="">All</option>
+                {% for v in filter_choices.vrams %}
+                    <option value="{{ v }}" {% if filters.vram == v %}selected{% endif %}>{{ v }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    {% endif %}
+
+    {# --- Power (PSU) Filter --- #}
+    {% if filter_choices.powers %}
+        <div>
+            <label class="form-label">Min Wattage</label>
+            <select name="power" class="form-select">
+                <option value="">Any</option>
+                {% for p in filter_choices.powers %}
+                    <option value="{{ p }}" {% if filters.power == p %}selected{% endif %}>{{ p }}W+</option>
+                {% endfor %}
+            </select>
+        </div>
+    {% endif %}
+
+    {# --- Size Filter --- #}
+    {% if filter_choices.sizes %}
+        <div>
+            <label class="form-label">Size</label>
+            <select name="size" class="form-select">
+                <option value="">All</option>
+                {% for sz in filter_choices.sizes %}
+                    <option value="{{ sz }}" {% if filters.size == sz %}selected{% endif %}>{{ sz }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    {% endif %}
+
+    {# --- Type Filter (Coolers, RAM, Storage) --- #}
+    {% if filter_choices.types %}
+        <div>
+            <label class="form-label">Type</label>
+            <select name="type" class="form-select">
+                <option value="">All</option>
+                {% for t in filter_choices.types %}
+                    <option value="{{ t }}" {% if filters.type == t %}selected{% endif %}>{{ t }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    {% endif %}
+
+    {# --- Sort Field --- #}
+    <div>
+        <label class="form-label">Sort By</label>
+        <select name="sort" class="form-select">
+            <option value="">Default</option>
+            <option value="price" {% if filters.sort == "price" %}selected{% endif %}>Price: Low to High</option>
+            <option value="-price" {% if filters.sort == "-price" %}selected{% endif %}>Price: High to Low</option>
+            <option value="name" {% if filters.sort == "name" %}selected{% endif %}>Name: A-Z</option>
+            <option value="-name" {% if filters.sort == "-name" %}selected{% endif %}>Name: Z-A</option>
+        </select>
+    </div>
+
+    {# --- Search Bar --- #}
+    <div>
+        <label class="form-label">Search</label>
+        <input type="text" name="search" value="{{ filters.search }}" placeholder="Search..." class="form-control">
+    </div>
+
+    {# --- Apply Button --- #}
+    <div>
+        <button type="submit" class="btn btn-primary">Apply</button>
+    </div>
+
+    {# --- Reset Filters Button (optional) --- #}
+    <div>
+        <a href="?" class="btn btn-secondary">Reset</a>
+    </div>
+</form>

@@ -89,6 +89,8 @@ class Motherboard(models.Model):
     brand = models.CharField(max_length=50)
     socket = models.CharField(max_length=50)
     size = models.CharField(max_length=50)
+    ram_slots = models.CharField(max_length=255, null=True, blank=True)
+    ram_type = models.CharField(max_length=10, null=True, blank=True)
 
     class Meta:
         verbose_name = "Motherboard"

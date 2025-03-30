@@ -90,7 +90,16 @@ def import_motherboard_data():
     with open(MOTHERBOARD_CSV_PATH, 'r', encoding='utf-8') as file:
         reader = csv.DictReader(file)
         motherboard_objects = [
-            Motherboard(name=row['name'], image=row['image'], url=row['url'], brand=row['brand'], socket=row['socket'], size=row['size'])
+            Motherboard(
+                name=row['name'],
+                image=row['image'],
+                url=row['url'],
+                brand=row['brand'],
+                socket=row['socket'],
+                size=row['size'],
+                ram_slots=row['ram_slots'],
+                ram_type=row['ram_type']
+            )
             for row in reader
         ]
         Motherboard.objects.bulk_create(motherboard_objects)
