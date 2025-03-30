@@ -9,18 +9,19 @@ from .filters import apply_filters, apply_sorting
 def components_page(request):
     return render(request, 'components.html')
 
-def component_list(request, component_type, build_id=None, component_id=None):
-    model_mapping = {
-        'cpu': CPU,
-        'gpu': GPU,
-        'motherboard': Motherboard,
-        'ram': RAM,
-        'storage': Storage,
-        'case': Case,
-        'psu': PSU,
-        'cooler': Cooler
-    }
+model_mapping = {
+    'cpu': (CPU, 'CPU'),
+    'gpu': (GPU, 'GPU'),
+    'motherboard': (Motherboard, 'Motherboard'),
+    'ram': (RAM, 'RAM'),
+    'storage': (Storage, 'Storage'),
+    'psu': (PSU, 'Power Supply'),
+    'case': (Case, 'Case'),
+    'cooler': (Cooler, 'CPU Cooler')
+}
 
+def component_list(request, component_type, build_id=None, component_id=None):
+    
     # Pretty display names for the webpage
     display_names = {
         'cpu': 'CPUs',
@@ -36,7 +37,7 @@ def component_list(request, component_type, build_id=None, component_id=None):
     if component_type not in model_mapping:
         return render(request, '404.html')
 
-    model = model_mapping[component_type]
+    model, _ = model_mapping[component_type]
 
     # Context if page is loaded as part of a current build
     if build_id and component_id:
@@ -154,3 +155,27 @@ def component_list(request, component_type, build_id=None, component_id=None):
     }
 
     return render(request, 'component_list.html', context)
+
+def component_detail(request, component_type, component_id, build_id=None):
+    if component_type not in model_mapping:
+        return render(request, '404.html')
+
+    build = get_object_or_404(PCBuild, id=build_id) if build_id else None
+    model, display_name = model_mapping[component_type]
+    component = get_object_or_404(model, id=component_id)
+
+    # Build a spec dictionary from all fields except ID and image/url
+    exclude_fields = ['id', 'name', 'image', 'url', 'price']
+    specs = {
+        field.verbose_name.title(): getattr(component, field.name)
+        for field in model._meta.fields
+        if field.name not in exclude_fields
+    }
+
+    return render(request, 'component_detail.html', {
+        'component': component,
+        'component_type': component_type,
+        'display_name': display_name,
+        'specs': specs,
+        'build': build,
+    })

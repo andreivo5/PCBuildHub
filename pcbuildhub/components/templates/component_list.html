@@ -5,6 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ component_name }} List | PCBuildHub</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .link-hover {
+            color: inherit;
+            text-decoration: none;
+            transition: color 0.2s ease, text-decoration 0.2s ease;
+        }
+        
+        .link-hover:hover {
+            color: #0a58ca;
+            text-decoration: underline;
+        }
+    </style>        
 </head>
 <body>
     <div class="container mt-5">
@@ -16,7 +28,7 @@
             <input type="text" name="search" class="form-control me-2" placeholder="Search {{ component_display_name }}" value="{{ request.GET.search }}">
             <button type="submit" class="btn btn-outline-primary">Search</button>
         </form>        
-        
+
         <div class="table-responsive">
             <table class="table table-striped">
                 <thead>
@@ -82,14 +94,24 @@
                         </td>
                 
                         {% if component_name == "Gpu" %}
-                            <td>{{ component.name }}</td>
+                            <td>
+                                <a href="{% if build %}{% url 'component_detail_with_build' component_name|lower component.id build.id %}{% else %}{% url 'component_detail' component_name|lower component.id %}{% endif %}"
+                                class="fw-semibold link-hover">
+                                    {{ component.name }}
+                                </a>
+                            </td>
                             <td>{{ component.model }}</td>
                             <td>{{ component.vram_gb }} GB</td>
                             <td>{{ component.tdp }} W</td>
                             <td>{{ component.g3d_mark }}</td>
                             <td>{% if component.price %}€{{ component.price }}{% else %}N/A{% endif %}</td>
                         {% elif component_name == "Cpu" %}
-                            <td>{{ component.name }}</td>
+                            <td>
+                                <a href="{% if build %}{% url 'component_detail_with_build' component_name|lower component.id build.id %}{% else %}{% url 'component_detail' component_name|lower component.id %}{% endif %}"
+                                class="fw-semibold link-hover">
+                                    {{ component.name }}
+                                </a>
+                            </td>
                             <td>{{ component.core_count }}</td>
                             <td>{{ component.speed }} GHz</td>
                             <td>{{ component.socket }}</td>
@@ -97,36 +119,71 @@
                             <td>{{ component.cpu_mark }}</td>
                             <td>{% if component.price %}€{{ component.price }}{% else %}N/A{% endif %}</td>
                         {% elif component_name == "Motherboard" %}
-                            <td>{{ component.name }}</td>
+                            <td>
+                                <a href="{% if build %}{% url 'component_detail_with_build' component_name|lower component.id build.id %}{% else %}{% url 'component_detail' component_name|lower component.id %}{% endif %}"
+                                class="fw-semibold link-hover">
+                                    {{ component.name }}
+                                </a>
+                            </td>
                             <td>{{ component.socket }}</td>
                             <td>{{ component.size }}</td>
                             <td>{{ component.ram_type }}</td>
                             <td>{% if component.price %}€{{ component.price }}{% else %}N/A{% endif %}</td>                        
                         {% elif component_name == "Ram" %}
-                            <td>{{ component.name }}</td>
+                            <td>
+                                <a href="{% if build %}{% url 'component_detail_with_build' component_name|lower component.id build.id %}{% else %}{% url 'component_detail' component_name|lower component.id %}{% endif %}"
+                                class="fw-semibold link-hover">
+                                    {{ component.name }}
+                                </a>
+                            </td>
                             <td>{{ component.type }}</td>
                             <td>{{ component.size }} GB</td>
                             <td>{% if component.price %}€{{ component.price }}{% else %}N/A{% endif %}</td>
                         {% elif component_name == "Storage" %}
-                            <td>{{ component.name }}</td>
+                            <td>
+                                <a href="{% if build %}{% url 'component_detail_with_build' component_name|lower component.id build.id %}{% else %}{% url 'component_detail' component_name|lower component.id %}{% endif %}"
+                                class="fw-semibold link-hover">
+                                    {{ component.name }}
+                                </a>
+                            </td>
                             <td>{{ component.space }} GB</td>
                             <td>{{ component.type }}</td>
                             <td>{% if component.price %}€{{ component.price }}{% else %}N/A{% endif %}</td>
                         {% elif component_name == "Psu" %}
-                            <td>{{ component.name }}</td>
+                            <td>
+                                <a href="{% if build %}{% url 'component_detail_with_build' component_name|lower component.id build.id %}{% else %}{% url 'component_detail' component_name|lower component.id %}{% endif %}"
+                                class="fw-semibold link-hover">
+                                    {{ component.name }}
+                                </a>
+                            </td>
                             <td>{{ component.size }}</td>
                             <td>{{ component.power }} W</td>
                             <td>{% if component.price %}€{{ component.price }}{% else %}N/A{% endif %}</td>
                         {% elif component_name == "Case" %}
-                            <td>{{ component.name }}</td>
+                            <td>
+                                <a href="{% if build %}{% url 'component_detail_with_build' component_name|lower component.id build.id %}{% else %}{% url 'component_detail' component_name|lower component.id %}{% endif %}"
+                                class="fw-semibold link-hover">
+                                    {{ component.name }}
+                                </a>
+                            </td>
                             <td>{{ component.size }}</td>
                             <td>{% if component.price %}€{{ component.price }}{% else %}N/A{% endif %}</td>
                         {% elif component_name == "Cooler" %}
-                            <td>{{ component.name }}</td>
+                            <td>
+                                <a href="{% if build %}{% url 'component_detail_with_build' component_name|lower component.id build.id %}{% else %}{% url 'component_detail' component_name|lower component.id %}{% endif %}"
+                                class="fw-semibold link-hover">
+                                    {{ component.name }}
+                                </a>
+                            </td>
                             <td>{{ component.type }}</td>
                             <td>{% if component.price %}€{{ component.price }}{% else %}N/A{% endif %}</td>
                         {% else %}
-                            <td>{{ component.name }}</td>
+                            <td>
+                                <a href="{% if build %}{% url 'component_detail_with_build' component_name|lower component.id build.id %}{% else %}{% url 'component_detail' component_name|lower component.id %}{% endif %}"
+                                class="fw-semibold link-hover">
+                                    {{ component.name }}
+                                </a>
+                            </td>
                         {% endif %}
                 
                         {% if build %}
@@ -147,7 +204,11 @@
         {% include 'pagination.html' %}
 
         <div class="text-center mt-4">
-            <a href="{% url 'components' %}" class="btn btn-secondary">Back to Components</a>
+            {% if build %}
+                <a href="{{ build.get_absolute_url }}" class="btn btn-secondary">Back to Build</a>
+            {% else %}
+                <a href="{% url 'components' %}" class="btn btn-secondary">Back to Components</a>
+            {% endif %}
         </div>
     </div>
 </body>
