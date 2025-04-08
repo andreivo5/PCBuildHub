@@ -20,6 +20,12 @@ model_mapping = {
     'cooler': (Cooler, 'CPU Cooler')
 }
 
+def get_min_offer_price(offers):
+    try:
+        return min(float(o['price']) for o in offers) if offers else None
+    except (KeyError, ValueError, TypeError):
+        return None
+
 def component_list(request, component_type, build_id=None, component_id=None):
     
     # Pretty display names for the webpage
@@ -137,6 +143,11 @@ def component_list(request, component_type, build_id=None, component_id=None):
         filter_choices['types'] = components.values_list('type', flat=True).distinct().order_by('type')
 
     """
+
+    # Minimum price logic
+    for c in components:
+        c.min_price = get_min_offer_price(getattr(c, 'offers', None))
+
     # Pagination logic
     paginator = Paginator(components, 30)
     product_count = components.count()
@@ -165,7 +176,7 @@ def component_detail(request, component_type, component_id, build_id=None):
     component = get_object_or_404(model, id=component_id)
 
     # Build a spec dictionary from all fields except ID and image/url
-    exclude_fields = ['id', 'name', 'image', 'url', 'price']
+    exclude_fields = ['id', 'name', 'image', 'url', 'offers']
     specs = {
         field.verbose_name.title(): getattr(component, field.name)
         for field in model._meta.fields
@@ -178,4 +189,5 @@ def component_detail(request, component_type, component_id, build_id=None):
         'display_name': display_name,
         'specs': specs,
         'build': build,
+        'offers': getattr(component, 'offers', []),
     })

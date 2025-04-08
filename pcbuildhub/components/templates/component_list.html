@@ -104,7 +104,13 @@
                             <td>{{ component.vram_gb }} GB</td>
                             <td>{{ component.tdp }} W</td>
                             <td>{{ component.g3d_mark }}</td>
-                            <td>{% if component.price %}€{{ component.price }}{% else %}N/A{% endif %}</td>
+                            <td>
+                                {% if component.min_price %}
+                                  €{{ component.min_price|floatformat:2 }}
+                                {% else %}
+                                  N/A
+                                {% endif %}
+                            </td>                              
                         {% elif component_name == "Cpu" %}
                             <td>
                                 <a href="{% if build %}{% url 'component_detail_with_build' component_name|lower component.id build.id %}{% else %}{% url 'component_detail' component_name|lower component.id %}{% endif %}"
@@ -117,7 +123,13 @@
                             <td>{{ component.socket }}</td>
                             <td>{{ component.tdp }} W</td>
                             <td>{{ component.cpu_mark }}</td>
-                            <td>{% if component.price %}€{{ component.price }}{% else %}N/A{% endif %}</td>
+                            <td>
+                                {% if component.min_price %}
+                                  €{{ component.min_price|floatformat:2 }}
+                                {% else %}
+                                  N/A
+                                {% endif %}
+                            </td>
                         {% elif component_name == "Motherboard" %}
                             <td>
                                 <a href="{% if build %}{% url 'component_detail_with_build' component_name|lower component.id build.id %}{% else %}{% url 'component_detail' component_name|lower component.id %}{% endif %}"
@@ -128,7 +140,13 @@
                             <td>{{ component.socket }}</td>
                             <td>{{ component.size }}</td>
                             <td>{{ component.ram_type }}</td>
-                            <td>{% if component.price %}€{{ component.price }}{% else %}N/A{% endif %}</td>                        
+                            <td>
+                                {% if component.min_price %}
+                                  €{{ component.min_price|floatformat:2 }}
+                                {% else %}
+                                  N/A
+                                {% endif %}
+                            </td>                      
                         {% elif component_name == "Ram" %}
                             <td>
                                 <a href="{% if build %}{% url 'component_detail_with_build' component_name|lower component.id build.id %}{% else %}{% url 'component_detail' component_name|lower component.id %}{% endif %}"
@@ -138,7 +156,13 @@
                             </td>
                             <td>{{ component.type }}</td>
                             <td>{{ component.size }} GB</td>
-                            <td>{% if component.price %}€{{ component.price }}{% else %}N/A{% endif %}</td>
+                            <td>
+                                {% if component.min_price %}
+                                  €{{ component.min_price|floatformat:2 }}
+                                {% else %}
+                                  N/A
+                                {% endif %}
+                            </td>
                         {% elif component_name == "Storage" %}
                             <td>
                                 <a href="{% if build %}{% url 'component_detail_with_build' component_name|lower component.id build.id %}{% else %}{% url 'component_detail' component_name|lower component.id %}{% endif %}"
@@ -148,7 +172,13 @@
                             </td>
                             <td>{{ component.space }} GB</td>
                             <td>{{ component.type }}</td>
-                            <td>{% if component.price %}€{{ component.price }}{% else %}N/A{% endif %}</td>
+                            <td>
+                                {% if component.min_price %}
+                                  €{{ component.min_price|floatformat:2 }}
+                                {% else %}
+                                  N/A
+                                {% endif %}
+                            </td>
                         {% elif component_name == "Psu" %}
                             <td>
                                 <a href="{% if build %}{% url 'component_detail_with_build' component_name|lower component.id build.id %}{% else %}{% url 'component_detail' component_name|lower component.id %}{% endif %}"
@@ -158,7 +188,13 @@
                             </td>
                             <td>{{ component.size }}</td>
                             <td>{{ component.power }} W</td>
-                            <td>{% if component.price %}€{{ component.price }}{% else %}N/A{% endif %}</td>
+                            <td>
+                                {% if component.min_price %}
+                                  €{{ component.min_price|floatformat:2 }}
+                                {% else %}
+                                  N/A
+                                {% endif %}
+                            </td>
                         {% elif component_name == "Case" %}
                             <td>
                                 <a href="{% if build %}{% url 'component_detail_with_build' component_name|lower component.id build.id %}{% else %}{% url 'component_detail' component_name|lower component.id %}{% endif %}"
@@ -167,7 +203,13 @@
                                 </a>
                             </td>
                             <td>{{ component.size }}</td>
-                            <td>{% if component.price %}€{{ component.price }}{% else %}N/A{% endif %}</td>
+                            <td>
+                                {% if component.min_price %}
+                                  €{{ component.min_price|floatformat:2 }}
+                                {% else %}
+                                  N/A
+                                {% endif %}
+                            </td>
                         {% elif component_name == "Cooler" %}
                             <td>
                                 <a href="{% if build %}{% url 'component_detail_with_build' component_name|lower component.id build.id %}{% else %}{% url 'component_detail' component_name|lower component.id %}{% endif %}"
@@ -176,7 +218,13 @@
                                 </a>
                             </td>
                             <td>{{ component.type }}</td>
-                            <td>{% if component.price %}€{{ component.price }}{% else %}N/A{% endif %}</td>
+                            <td>
+                                {% if component.min_price %}
+                                  €{{ component.min_price|floatformat:2 }}
+                                {% else %}
+                                  N/A
+                                {% endif %}
+                            </td>
                         {% else %}
                             <td>
                                 <a href="{% if build %}{% url 'component_detail_with_build' component_name|lower component.id build.id %}{% else %}{% url 'component_detail' component_name|lower component.id %}{% endif %}"
