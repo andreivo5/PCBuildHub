@@ -1,3 +1,4 @@
 from django.shortcuts import render
 
-# Create your views here.
+def upgrade_build_home(request):
+    return render(request, 'upgrade.html')

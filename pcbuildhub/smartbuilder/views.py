@@ -1,3 +1,4 @@
 from django.shortcuts import render
 
-# Create your views here.
+def smart_builder_home(request):
+    return render(request, 'smartbuild.html')
