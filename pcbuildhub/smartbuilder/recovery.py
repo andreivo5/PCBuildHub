@@ -4,7 +4,7 @@ from .utils import get_min_price, compatibility_filter
 from builder.compatibility import estimate_total_power
 
 # Function to downgrade each component in cycles, 1 step at a time, until the build fits the budget.
-def budget_recovery(build_components, numeric_budget, partial_build, candidates):
+def budget_recovery(build_components, numeric_budget, partial_build, candidates, use_case="gaming"):
     logger.warning("- STARTING BUDGET RECOVERY - ")
 
     def total_price(comps):
@@ -46,9 +46,9 @@ def budget_recovery(build_components, numeric_budget, partial_build, candidates)
             elif comp_type == "storage":
                 comps, changed = downgrade_storage(comps, current_index, comp_list)
             elif comp_type == "psu":
-                comps, changed = downgrade_psu(comps, current_index, comp_list, partial, resolution_is_high)
+                comps, changed = downgrade_psu(comps, current_index, comp_list, partial, resolution_is_high, use_case)
             elif comp_type == "cooler":
-                comps, changed = downgrade_cooler(comps, current_index, comp_list)
+                comps, changed = downgrade_cooler(comps, current_index, comp_list, use_case)
             elif comp_type == "case":
                 comps, changed = downgrade_case(comps, current_index, comp_list, partial)
             elif comp_type == "motherboard":
@@ -92,14 +92,17 @@ def downgrade_storage(comps, level, storage_candidates):
     logger.info(f"- Storage downgraded - to {new_storage.name} ({new_storage.space} GB, {new_storage.type}) - Level {level}")
     return comps, True
 
-# Function to downgrade PSU by reducing headroom from 50% to 25%, then by cheaper price.
-def downgrade_psu(comps, level, psu_candidates, partial_build, resolution_is_high):
+# Function to downgrade PSU by reducing headroom per use case, then by cheaper price.
+def downgrade_psu(comps, level, psu_candidates, partial_build, resolution_is_high, use_case="gaming"):
     psu_idx = next((i for i, c in enumerate(comps) if isinstance(c, PSU)), None)
     if psu_idx is None:
         return comps, False
 
     current_psu = comps[psu_idx]
-    headroom_levels = [1.5, 1.25] if resolution_is_high else [1.3, 1.15]
+    if use_case == "editing":
+        headroom_levels = [1.3, 1.15]
+    else:
+        headroom_levels = [1.5, 1.25] if resolution_is_high else [1.3, 1.15]
 
     if level < len(headroom_levels):
         required_power = int(estimate_total_power(partial_build) * headroom_levels[level])
@@ -123,13 +126,16 @@ def downgrade_psu(comps, level, psu_candidates, partial_build, resolution_is_hig
     return comps, False
 
 # Function to downgrade coolers by cheaper price, then switching from liquid to air if necessary.
-def downgrade_cooler(comps, level, cooler_candidates):
+def downgrade_cooler(comps, level, cooler_candidates, use_case="gaming"):
     cooler_idx = next((i for i, c in enumerate(comps) if isinstance(c, Cooler)), None)
     if cooler_idx is None or level >= len(cooler_candidates):
         return comps, False
 
     current_cooler = comps[cooler_idx]
     candidate = cooler_candidates[level]
+
+    if use_case == "editing" and candidate.type.lower() == "liquid":
+        return comps, False
 
     if candidate != current_cooler:
         comps[cooler_idx] = candidate

@@ -2,20 +2,33 @@ import random
 import string
 from builder.compatibility import case_compatibility, psu_compatibility
 
-# Function to convert resolution and framerate to a synergy label for the ML models.
-def map_label(resolution, framerate):
-    res = resolution.lower()
-   
-    try:
-        f_val = int(framerate)
-        if f_val <= 60:
-            return f"{res}_60"
-        elif f_val < 144:
-            return f"{res}_120-144"
+# Function to map user inputs to model labels.
+def map_label(use_case, resolution=None, framerate=None, software=None):
+    if use_case == "gaming":
+        res = resolution.lower()
+        try:
+            f_val = int(framerate)
+            if f_val <= 60:
+                return f"{res}_60"
+            elif f_val < 144:
+                return f"{res}_120-144"
+            else:
+                return f"{res}_144+"
+        except:
+            return f"{res}_{framerate}"
+
+    elif use_case == "editing":
+        res = resolution.lower()
+        sw = software.lower()
+        if "premiere" in sw:
+            return f"edit_{res}_premiere"
+        elif "resolve" in sw:
+            return f"edit_{res}_resolve"
         else:
-            return f"{res}_144+"
-    except:
-        return f"{res}_{framerate}"
+            return f"edit_{res}_other"
+
+    else:
+        raise ValueError(f"Unknown use case: {use_case}")
 
 # Function to generate a short ID for builds
 def generate_short_id():

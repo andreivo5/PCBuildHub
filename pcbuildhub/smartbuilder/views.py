@@ -33,12 +33,18 @@ def smart_builder_submit(request):
     if request.method != "POST":
         return redirect("smart_builder_home")
 
+    use_case = request.POST.get("use_case", "gaming").lower()
     resolution = request.POST.get("resolution", "1080p")
     framerate = request.POST.get("framerate", "60")
     numeric_budget = int(request.POST.get("budget", 2000))
-    synergy_label = map_label(resolution, framerate)
+    synergy_label = map_label(
+        use_case=use_case,
+        resolution=resolution,
+        framerate=framerate,
+        software=request.POST.get("editing_software", "")
+    )
 
-    logger.info(f"SmartBuilder: Resolution={resolution}, FPS={framerate}, Label={synergy_label}, Budget={numeric_budget}")
+    logger.info(f"SmartBuilder: UseCase={use_case}, Resolution={resolution}, FPS={framerate}, Label={synergy_label}, Budget={numeric_budget}")
 
     # (Step 1): GPU & CPU gathering, deduplicating GPUs by model, using lowest price option.
     raw_gpus = GPU.objects.exclude(g3d_mark__isnull=True)
@@ -59,14 +65,13 @@ def smart_builder_submit(request):
     combos = []
     for gpu in unique_gpus:
         for cpu in raw_cpus:
-            # Early price check to filter out components w/ value over budget x 0.7
             gpu_price = get_min_price(gpu)
             cpu_price = get_min_price(cpu)
             if gpu_price + cpu_price > numeric_budget * 0.7:
                 logger.debug(f"- Rejected - CPU + GPU combo due to price: CPU={cpu.name} (EUR {cpu_price:.2f}), GPU={gpu.name} (EUR {gpu_price:.2f})")
                 continue
 
-            synergy_score = predict_cpu_gpu_synergy(synergy_label, cpu, gpu)
+            synergy_score = predict_cpu_gpu_synergy(synergy_label, cpu, gpu, use_case)
             logger.debug(f"- Synergy Check - CPU={cpu.name}, GPU={gpu.name}, Score={synergy_score:.3f}")
             if synergy_score >= synergy_threshold:
                 combos.append((cpu, gpu, synergy_score))
@@ -75,11 +80,9 @@ def smart_builder_submit(request):
         logger.warning("No CPU/GPU synergy combos found by model.")
         return HttpResponse("No synergy combos found for these requirements.", status=404)
 
-    # Sorting combos by synergy descending.
     combos.sort(key=lambda x: x[2], reverse=True)
     logger.info(f"- Found: {len(combos)} synergy combos. Trying them in descending synergy order.")
 
-    # (Step 3) Iterating combos, building out the rest of the PC each time by budget checking.
     for (candidate_cpu, candidate_gpu_repr, synergy_val) in combos:
         logger.debug(
             f"- Trying Synergy - CPU ={candidate_cpu.name} (EUR{get_min_price(candidate_cpu):.2f}), "
@@ -87,7 +90,6 @@ def smart_builder_submit(request):
             f"- Synergy ={synergy_val:.3f}"
         )
 
-        # (Step 3a): GPU recheck - picking the cheapest sub-brand GPU with the same model, failsafe to logic in step 1.
         same_model_gpus = GPU.objects.filter(model=candidate_gpu_repr.model)
         cheapest_subbrand_gpu = None
         cheapest_price = 999999
@@ -100,8 +102,7 @@ def smart_builder_submit(request):
         chosen_gpu = cheapest_subbrand_gpu or candidate_gpu_repr
         chosen_cpu = candidate_cpu
 
-        # (Step 3b): Motherboard, sorting by most expensive first
-        prefer_ddr5 = numeric_budget > 1500
+        prefer_ddr5 = numeric_budget > 1500 or use_case == "editing"
         mobos = Motherboard.objects.filter(socket=chosen_cpu.socket)
         if prefer_ddr5:
             ddr5_mobos = mobos.filter(ram_type__icontains="DDR5")
@@ -113,7 +114,6 @@ def smart_builder_submit(request):
             continue
         chosen_mobo = motherboard_candidates[0]
 
-        # (Step 3c): RAM with set preferences per budget
         if numeric_budget <= 1000:
             max_ram_price = 60
         elif numeric_budget <= 2000:
@@ -122,8 +122,8 @@ def smart_builder_submit(request):
             max_ram_price = 150
         else:
             max_ram_price = float('inf')
-        
-        ram_sizes = [64, 32, 16]
+
+        ram_sizes = [64, 32] if use_case == "editing" else [64, 32, 16]
         ram_type_kw = "DDR5" if prefer_ddr5 else "DDR4"
         ram_candidates = []
         for size in ram_sizes:
@@ -136,7 +136,6 @@ def smart_builder_submit(request):
             continue
         chosen_ram = ram_candidates[0]
 
-        # (Step 3d): Storage with set preferences per budget
         if numeric_budget <= 1000:
             max_storage_price = 80
         elif numeric_budget <= 2000:
@@ -146,7 +145,7 @@ def smart_builder_submit(request):
         else:
             max_storage_price = float('inf')
 
-        storage_sizes = [1000, 500]
+        storage_sizes = [2000, 1000, 500] if use_case == "editing" else [1000, 500]
         storage_types = ["NVME", "SATA"]
         storage_candidates = []
         for size in storage_sizes:
@@ -159,12 +158,11 @@ def smart_builder_submit(request):
             continue
         chosen_storage = storage_candidates[0]
 
-        # (Step 3e): PSU, with logic for greater headroom for higher resolution systems
         partial_build = PCBuild(
             cpu=chosen_cpu, gpu=chosen_gpu, motherboard=chosen_mobo,
             ram=chosen_ram, storage=chosen_storage
         )
-        resolution_is_high = resolution.lower() in ["1440p", "4k"]
+        resolution_is_high = resolution.lower() in ["1440p", "4k"] or use_case == "editing"
         headroom = 1.5 if resolution_is_high else 1.3
         needed_wattage = int(estimate_total_power(partial_build) * headroom)
         psus = PSU.objects.filter(power__gte=needed_wattage)
@@ -174,16 +172,14 @@ def smart_builder_submit(request):
             continue
         chosen_psu = psu_candidates[len(psu_candidates) // 2]
 
-        # (Step 3f): Case
         partial_build.psu = chosen_psu
         case_qs = compatibility_filter(Case.objects.all(), "case", partial_build)
         case_candidates = sorted(case_qs, key=get_min_price, reverse=(numeric_budget >= 3000))
         if not case_candidates:
             logger.warning("- NOT FOUND - Case. Skipping synergy.")
             continue
-        chosen_case = case_candidates[0] if numeric_budget < 3000 else case_candidates[0]
+        chosen_case = case_candidates[0]
 
-        # (Step 3g): Cooler, sorting by median priced liquid coolers
         cooler_candidates = []
         for ctype in ["liquid", "air"]:
             coolers = Cooler.objects.filter(type__iexact=ctype)
@@ -195,7 +191,6 @@ def smart_builder_submit(request):
             continue
         chosen_cooler = cooler_candidates[len(cooler_candidates) // 2]
 
-        # (Step 3h): Budget Recovery
         components = [
             chosen_cpu, chosen_gpu, chosen_mobo, chosen_ram,
             chosen_storage, chosen_psu, chosen_case, chosen_cooler
@@ -217,9 +212,8 @@ def smart_builder_submit(request):
                 logger.debug(f"  - {type(c).__name__}: {c.name} (EUR{get_min_price(c):.2f})")
             logger.debug(f"Total: EUR{total_price:.2f} > Budget: EUR{numeric_budget}")
 
-
             final_comps, final_total, success = budget_recovery(
-                components, numeric_budget, partial_build, recovery_candidates
+                components, numeric_budget, partial_build, recovery_candidates, use_case
             )
 
             if not success or final_total > numeric_budget:
@@ -253,3 +247,4 @@ def smart_builder_submit(request):
         return redirect(new_build.get_absolute_url())
 
     return HttpResponse("No valid build could be found within budget.", status=404)
+

@@ -65,7 +65,7 @@
             </div>
         </div>
 
-        <div id="section-video-editing" class="section">
+        <div id="section-editing" class="section">
             <h4>Editing Resolution</h4>
             <div class="row my-3">
                 {% for res in editing_resolutions %}
@@ -80,7 +80,7 @@
             </div>
         </div>
 
-        <div id="section-development" class="section">
+        <div id="section-dev" class="section">
             <h4>Type of Development</h4>
             <div class="row my-3">
                 {% for dev in dev_types %}
@@ -135,16 +135,22 @@
     function selectUseCase(value, e) {
         const input = document.getElementById("input-use-case");
         if (!input) return console.error("Missing input-use-case element");
-        input.value = value;
+    
+        let use_case_value = value.toLowerCase().replace(/\s+/g, "-");
+        if (use_case_value === "video-editing") use_case_value = "editing";
+        if (use_case_value === "development") use_case_value = "dev";
+        
+        input.value = use_case_value;
+    
         document.querySelectorAll("[data-type='use-case']").forEach(el => el.classList.remove("active"));
         e.currentTarget.classList.add("active");
-
+    
         document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-        const section = document.getElementById("section-" + value.toLowerCase().replace(/\s+/g, "-"));
+        const section = document.getElementById("section-" + use_case_value);
         if (section) section.classList.add("active");
-
-        console.log("[USE CASE]", value);
-    }
+    
+        console.log("[USE CASE]", use_case_value);
+    }    
 
     function selectOption(type, value, e) {
         const input = document.getElementById("input-" + type);

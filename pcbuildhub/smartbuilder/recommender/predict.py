@@ -3,14 +3,23 @@ import joblib
 import pandas as pd
 
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
-MODELS_DIR = os.path.join(CURRENT_DIR, "gaming")
+MODELS_BASE_DIR = CURRENT_DIR
 FEATURE_COLUMNS = [
     "cpu_mark", "cpu_cores", "cpu_clock", "cpu_smt", "cpu_tdp", "thread_mark",
     "g3d_mark", "gpu_vram", "gpu_tdp", "gpu_g2d"
 ]
 
-def predict_cpu_gpu_synergy(label, cpu, gpu):
-    model_path = os.path.join(MODELS_DIR, f"model_{label}.pkl")
+# Function to process the best synergy matches between CPU & GPU combos based on user's input.
+def predict_cpu_gpu_synergy(label, cpu, gpu, use_case="gaming"):
+    if use_case not in ["gaming", "editing"]:
+        raise ValueError(f"Invalid use_case: {use_case}. Must be 'gaming' or 'editing'.")
+
+    model_dir = os.path.join(MODELS_BASE_DIR, use_case)
+    model_path = os.path.join(model_dir, f"model_{label}.pkl")
+
+    if not os.path.exists(model_path):
+        raise FileNotFoundError(f"Model file not found: {model_path}")
+
     model = joblib.load(model_path)
 
     row_dict = {
@@ -28,6 +37,5 @@ def predict_cpu_gpu_synergy(label, cpu, gpu):
     }
 
     X = pd.DataFrame([row_dict], columns=FEATURE_COLUMNS)
-
     proba = model.predict_proba(X)[0, 1]
     return proba
