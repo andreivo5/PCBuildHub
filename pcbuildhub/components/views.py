@@ -157,11 +157,10 @@ def component_detail(request, component_type, component_id, build_id=None):
     if component_type not in model_mapping:
         return render(request, '404.html')
 
-    build = get_object_or_404(PCBuild, id=build_id) if build_id else None
     model, display_name = model_mapping[component_type]
     component = get_object_or_404(model, id=component_id)
+    build = get_object_or_404(PCBuild, id=build_id) if build_id else None
 
-    # Build a spec dictionary from all fields except ID and image/url
     exclude_fields = ['id', 'name', 'image', 'url', 'offers']
     specs = {
         field.verbose_name.title(): getattr(component, field.name)
@@ -177,3 +176,4 @@ def component_detail(request, component_type, component_id, build_id=None):
         'build': build,
         'offers': getattr(component, 'offers', []),
     })
+

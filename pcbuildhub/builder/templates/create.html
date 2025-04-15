@@ -45,17 +45,18 @@
             <th scope="col">Performance</th>
             <th scope="col">Price</th>
             <th scope="col">Action</th>
+            <th scope="col">Buy</th>
           </tr>
         </thead>
         <tbody class="table-light">
-          {% include 'partials/component_row.html' with label='CPU' type='cpu' component=build.cpu %}
-          {% include 'partials/component_row.html' with label='GPU' type='gpu' component=build.gpu %}
-          {% include 'partials/component_row.html' with label='Motherboard' type='motherboard' component=build.motherboard %}
-          {% include 'partials/component_row.html' with label='RAM' type='ram' component=build.ram %}
-          {% include 'partials/component_row.html' with label='Storage' type='storage' component=build.storage %}
-          {% include 'partials/component_row.html' with label='Case' type='case' component=build.case %}
-          {% include 'partials/component_row.html' with label='Power Supply' type='psu' component=build.psu %}
-          {% include 'partials/component_row.html' with label='Cooler' type='cooler' component=build.cooler %}
+          {% include 'partials/component_row.html' with label='CPU' type='cpu' component=build.cpu link=cpu_link %}
+          {% include 'partials/component_row.html' with label='GPU' type='gpu' component=build.gpu link=gpu_link %}
+          {% include 'partials/component_row.html' with label='Motherboard' type='motherboard' component=build.motherboard link=motherboard_link %}
+          {% include 'partials/component_row.html' with label='RAM' type='ram' component=build.ram link=ram_link %}
+          {% include 'partials/component_row.html' with label='Storage' type='storage' component=build.storage link=storage_link %}
+          {% include 'partials/component_row.html' with label='Case' type='case' component=build.case link=case_link %}
+          {% include 'partials/component_row.html' with label='Power Supply' type='psu' component=build.psu link=psu_link %}
+          {% include 'partials/component_row.html' with label='Cooler' type='cooler' component=build.cooler link=cooler_link %}
           <tr class="fw-bold bg-light">
             <td colspan="2" class="text-end">Estimated Total:</td>
             <td colspan="3">€{{ total_price|floatformat:2 }}</td>

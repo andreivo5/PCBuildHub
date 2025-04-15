@@ -48,16 +48,34 @@ def view_build(request, build_id):
         build.cpu, build.gpu, build.motherboard, build.ram,
         build.storage, build.case, build.psu, build.cooler
     ]
+
+    def get_first_offer_url(component):
+        try:
+            return component.offers[0]['url'] if component and component.offers else None
+        except (KeyError, IndexError, TypeError):
+            return None
+        
+    buy_links = {
+        'cpu_link': get_first_offer_url(build.cpu),
+        'gpu_link': get_first_offer_url(build.gpu),
+        'motherboard_link': get_first_offer_url(build.motherboard),
+        'ram_link': get_first_offer_url(build.ram),
+        'storage_link': get_first_offer_url(build.storage),
+        'case_link': get_first_offer_url(build.case),
+        'psu_link': get_first_offer_url(build.psu),
+        'cooler_link': get_first_offer_url(build.cooler),
+    }
+
     total_price = sum(c.min_price for c in components if c and c.min_price)
 
     context = {
         'build': build,
         'total_power_draw': total_power_draw,
         'power_status': power_status,
-        'total_price': total_price
+        'total_price': total_price,
+        **buy_links
     }
     return render(request, 'create.html', context)
-
 
 def new_build(request):
     if 'current_build' in request.session:

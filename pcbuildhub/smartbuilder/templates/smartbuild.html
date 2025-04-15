@@ -20,43 +20,108 @@
             color: white;
             border-color: #6c5ce7;
         }
+        .section { display: none; }
+        .section.active { display: block; }
     </style>
 </head>
 <body>
 <div class="container">
-    <h1 class="mb-5 text-center">Smart Builder – Gaming Only</h1>
+    <h1 class="mb-5 text-center">Smart Builder</h1>
 
     <form method="post" action="{% url 'smart_builder_submit' %}">
         {% csrf_token %}
+        <input type="hidden" name="use_case" id="input-use-case">
         <input type="hidden" name="resolution" id="input-resolution">
         <input type="hidden" name="framerate" id="input-framerate">
+        <input type="hidden" name="editing_software" id="input-editing_software">
+        <input type="hidden" name="dev_type" id="input-dev_type">
+        <input type="hidden" name="casual_use" id="input-casual_use">
+        <input type="hidden" name="casual_tabs" id="input-casual_tabs">
+        <input type="hidden" name="casual_storage" id="input-casual_storage">
+        <input type="hidden" name="casual_size_pref" id="input-casual_size_pref">
         <input type="hidden" name="budget" id="input-budget" value="2000">
 
-        <h4>1. Select Resolution</h4>
+        <h4>1. Select Use Case</h4>
         <div class="row my-3">
-            <div class="col"><div class="card card-option text-center p-3" data-type="resolution" onclick="selectOption('resolution', '1080p', event)">1080p</div></div>
-            <div class="col"><div class="card card-option text-center p-3" data-type="resolution" onclick="selectOption('resolution', '1440p', event)">1440p</div></div>
-            <div class="col"><div class="card card-option text-center p-3" data-type="resolution" onclick="selectOption('resolution', '4k', event)">4K</div></div>
+            {% for opt in use_cases %}
+            <div class="col">
+                <div class="card card-option text-center p-3" data-type="use-case" role="button" tabindex="0" onclick="selectUseCase('{{ opt }}', event)">{{ opt }}</div>
+            </div>
+            {% endfor %}
         </div>
 
-        <h4>2. Select Framerate</h4>
-        <div class="row my-3">
-            <div class="col"><div class="card card-option text-center p-3" data-type="framerate" onclick="selectOption('framerate', '60', event)">60 fps</div></div>
-            <div class="col"><div class="card card-option text-center p-3" data-type="framerate" onclick="selectOption('framerate', '120-144', event)">120–144 fps</div></div>
-            <div class="col"><div class="card card-option text-center p-3" data-type="framerate" onclick="selectOption('framerate', '144+', event)">144+ fps</div></div>
+        <div id="section-gaming" class="section">
+            <h4>Resolution</h4>
+            <div class="row my-3">
+                {% for res in gaming_resolutions %}
+                <div class="col"><div class="card card-option text-center p-3" data-type="resolution" role="button" tabindex="0" onclick="selectOption('resolution', '{{ res }}', event)">{{ res }}</div></div>
+                {% endfor %}
+            </div>
+            <h4>Framerate</h4>
+            <div class="row my-3">
+                {% for fps in gaming_framerates %}
+                <div class="col"><div class="card card-option text-center p-3" data-type="framerate" role="button" tabindex="0" onclick="selectOption('framerate', '{{ fps }}', event)">{{ fps }} fps</div></div>
+                {% endfor %}
+            </div>
         </div>
 
-        <h4>3. Select Budget</h4>
+        <div id="section-video-editing" class="section">
+            <h4>Editing Resolution</h4>
+            <div class="row my-3">
+                {% for res in editing_resolutions %}
+                <div class="col"><div class="card card-option text-center p-3" data-type="resolution" role="button" tabindex="0" onclick="selectOption('resolution', '{{ res }}', event)">{{ res }}</div></div>
+                {% endfor %}
+            </div>
+            <h4>Editing Software</h4>
+            <div class="row my-3">
+                {% for sw in editing_software %}
+                <div class="col"><div class="card card-option text-center p-3" data-type="editing_software" role="button" tabindex="0" onclick="selectOption('editing_software', '{{ sw }}', event)">{{ sw }}</div></div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div id="section-development" class="section">
+            <h4>Type of Development</h4>
+            <div class="row my-3">
+                {% for dev in dev_types %}
+                <div class="col"><div class="card card-option text-center p-3" data-type="dev_type" role="button" tabindex="0" onclick="selectOption('dev_type', '{{ dev }}', event)">{{ dev }}</div></div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div id="section-casual" class="section">
+            <h4>Main Use</h4>
+            <div class="row my-3">
+                {% for task in casual_primary_use %}
+                <div class="col"><div class="card card-option text-center p-3" data-type="casual_use" role="button" tabindex="0" onclick="selectOption('casual_use', '{{ task }}', event)">{{ task }}</div></div>
+                {% endfor %}
+            </div>
+            <h4>Tabs / Apps at Once</h4>
+            <div class="row my-3">
+                {% for tab in casual_tabs %}
+                <div class="col"><div class="card card-option text-center p-3" data-type="casual_tabs" role="button" tabindex="0" onclick="selectOption('casual_tabs', '{{ tab }}', event)">{{ tab }}</div></div>
+                {% endfor %}
+            </div>
+            <h4>Storage Needs</h4>
+            <div class="row my-3">
+                {% for s in casual_storage %}
+                <div class="col"><div class="card card-option text-center p-3" data-type="casual_storage" role="button" tabindex="0" onclick="selectOption('casual_storage', '{{ s }}', event)">{{ s }}</div></div>
+                {% endfor %}
+            </div>
+            <h4>Size / Noise Preference</h4>
+            <div class="row my-3">
+                {% for pref in casual_size_pref %}
+                <div class="col"><div class="card card-option text-center p-3" data-type="casual_size_pref" role="button" tabindex="0" onclick="selectOption('casual_size_pref', '{{ pref }}', event)">{{ pref }}</div></div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <h4>Budget</h4>
         <div class="row my-3">
             {% for b in budgets %}
-                <div class="col-auto">
-                    <button class="btn btn-outline-primary"
-                            type="button"
-                            onclick="selectBudget('{{ b.value }}', event)"
-                            data-type="budget">
-                        {{ b.label }}
-                    </button>
-                </div>
+            <div class="col-auto">
+                <button class="btn btn-outline-primary" type="button" onclick="selectBudget('{{ b.value }}', event)" data-type="budget">{{ b.label }}</button>
+            </div>
             {% endfor %}
         </div>
 
@@ -67,19 +132,36 @@
 </div>
 
 <script>
-    function selectOption(type, value, e) {
-        const hiddenId = `input-${type}`;
-        document.getElementById(hiddenId).value = value;
+    function selectUseCase(value, e) {
+        const input = document.getElementById("input-use-case");
+        if (!input) return console.error("Missing input-use-case element");
+        input.value = value;
+        document.querySelectorAll("[data-type='use-case']").forEach(el => el.classList.remove("active"));
+        e.currentTarget.classList.add("active");
 
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        const section = document.getElementById("section-" + value.toLowerCase().replace(/\s+/g, "-"));
+        if (section) section.classList.add("active");
+
+        console.log("[USE CASE]", value);
+    }
+
+    function selectOption(type, value, e) {
+        const input = document.getElementById("input-" + type);
+        if (!input) return console.error("Missing input-" + type);
+        input.value = value;
         document.querySelectorAll(`[data-type='${type}']`).forEach(el => el.classList.remove("active"));
         e.currentTarget.classList.add("active");
+        console.log(`[${type.toUpperCase()}]`, value);
     }
 
     function selectBudget(value, e) {
-        document.getElementById("input-budget").value = value;
-
+        const input = document.getElementById("input-budget");
+        if (!input) return console.error("Missing input-budget");
+        input.value = value;
         document.querySelectorAll("[data-type='budget']").forEach(el => el.classList.remove("active"));
         e.currentTarget.classList.add("active");
+        console.log("[BUDGET]", value);
     }
 </script>
 </body>

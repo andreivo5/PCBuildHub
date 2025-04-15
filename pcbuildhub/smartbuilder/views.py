@@ -10,7 +10,16 @@ from .logging_config import logger
 
 def smart_builder_home(request):
     return render(request, 'smartbuild.html', {
-        'options': ["Gaming"],
+        'use_cases': ["Gaming", "Video Editing", "Development", "Casual"],
+        'gaming_resolutions': ["1080p", "1440p", "4K"],
+        'gaming_framerates': ["60", "120–144", "144+"],
+        'editing_resolutions': ["1080p", "4K"],
+        'editing_software': ["Premiere Pro", "DaVinci Resolve", "Other"],
+        'dev_types': ["Web", "Mobile", "Game", "Data Science"],
+        'casual_primary_use': ["Web & media", "Light creative work", "Multitasking"],
+        'casual_tabs': ["Few", "Some", "Many"],
+        'casual_storage': ["Minimal", "Some", "A lot"],
+        'casual_size_pref': ["Quiet/Compact", "No preference"],
         'budgets': [
             {"label": "<€1000", "value": "1000"},
             {"label": "€1000–€2000", "value": "2000"},
@@ -19,7 +28,6 @@ def smart_builder_home(request):
             {"label": "€5000+", "value": "999999"},
         ]
     })
-
 
 def smart_builder_submit(request):
     if request.method != "POST":
