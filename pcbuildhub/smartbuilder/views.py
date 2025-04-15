@@ -41,7 +41,8 @@ def smart_builder_submit(request):
         use_case=use_case,
         resolution=resolution,
         framerate=framerate,
-        software=request.POST.get("editing_software", "")
+        software=request.POST.get("editing_software", ""),
+        dev_type=request.POST.get("dev_type", "")
     )
 
     logger.info(f"SmartBuilder: UseCase={use_case}, Resolution={resolution}, FPS={framerate}, Label={synergy_label}, Budget={numeric_budget}")
@@ -102,7 +103,7 @@ def smart_builder_submit(request):
         chosen_gpu = cheapest_subbrand_gpu or candidate_gpu_repr
         chosen_cpu = candidate_cpu
 
-        prefer_ddr5 = numeric_budget > 1500 or use_case == "editing"
+        prefer_ddr5 = numeric_budget > 1500 or use_case in ["editing", "dev"]
         mobos = Motherboard.objects.filter(socket=chosen_cpu.socket)
         if prefer_ddr5:
             ddr5_mobos = mobos.filter(ram_type__icontains="DDR5")
@@ -123,7 +124,15 @@ def smart_builder_submit(request):
         else:
             max_ram_price = float('inf')
 
-        ram_sizes = [64, 32] if use_case == "editing" else [64, 32, 16]
+        if use_case == "dev" and ("datasci" in synergy_label or "game" in synergy_label):
+            ram_sizes = [64, 32]
+        elif use_case == "dev":
+            ram_sizes = [32, 16]
+        elif use_case == "editing":
+            ram_sizes = [64, 32]
+        else:
+            ram_sizes = [64, 32, 16]
+
         ram_type_kw = "DDR5" if prefer_ddr5 else "DDR4"
         ram_candidates = []
         for size in ram_sizes:
@@ -145,7 +154,11 @@ def smart_builder_submit(request):
         else:
             max_storage_price = float('inf')
 
-        storage_sizes = [2000, 1000, 500] if use_case == "editing" else [1000, 500]
+        if use_case == "editing" or (use_case == "dev" and ("datasci" in synergy_label or "game" in synergy_label)):
+            storage_sizes = [2000, 1000, 500]
+        else:
+            storage_sizes = [1000, 500]
+
         storage_types = ["NVME", "SATA"]
         storage_candidates = []
         for size in storage_sizes:
@@ -162,7 +175,7 @@ def smart_builder_submit(request):
             cpu=chosen_cpu, gpu=chosen_gpu, motherboard=chosen_mobo,
             ram=chosen_ram, storage=chosen_storage
         )
-        resolution_is_high = resolution.lower() in ["1440p", "4k"] or use_case == "editing"
+        resolution_is_high = resolution.lower() in ["1440p", "4k"] or use_case in ["editing", "dev"]
         headroom = 1.5 if resolution_is_high else 1.3
         needed_wattage = int(estimate_total_power(partial_build) * headroom)
         psus = PSU.objects.filter(power__gte=needed_wattage)
@@ -225,7 +238,7 @@ def smart_builder_submit(request):
                 logger.info(f"- ACCEPTED - Post-recovery build at EUR{total_price:.2f}")
                 logger.debug("- COMPONENTS - Post-recovery components and prices:")
                 for c in components:
-                    logger.debug(f"  - {type(c).__name__}: {c.name} (€{get_min_price(c):.2f})")
+                    logger.debug(f"  - {type(c).__name__}: {c.name} (EUR{get_min_price(c):.2f})")
         else:
             logger.info(f"- ACCEPTED - Initial build accepted at EUR{total_price:.2f} (within budget).")
 

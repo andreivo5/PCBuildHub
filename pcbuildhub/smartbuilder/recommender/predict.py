@@ -11,8 +11,8 @@ FEATURE_COLUMNS = [
 
 # Function to process the best synergy matches between CPU & GPU combos based on user's input.
 def predict_cpu_gpu_synergy(label, cpu, gpu, use_case="gaming"):
-    if use_case not in ["gaming", "editing"]:
-        raise ValueError(f"Invalid use_case: {use_case}. Must be 'gaming' or 'editing'.")
+    if use_case not in ["gaming", "editing", "dev"]:
+        raise ValueError(f"Invalid use_case: {use_case}. Must be 'gaming', 'editing', or 'dev'.")
 
     model_dir = os.path.join(MODELS_BASE_DIR, use_case)
     model_path = os.path.join(model_dir, f"model_{label}.pkl")

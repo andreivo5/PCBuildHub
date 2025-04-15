@@ -3,7 +3,7 @@ import string
 from builder.compatibility import case_compatibility, psu_compatibility
 
 # Function to map user inputs to model labels.
-def map_label(use_case, resolution=None, framerate=None, software=None):
+def map_label(use_case, resolution=None, framerate=None, software=None, dev_type=None):
     if use_case == "gaming":
         res = resolution.lower()
         try:
@@ -26,6 +26,23 @@ def map_label(use_case, resolution=None, framerate=None, software=None):
             return f"edit_{res}_resolve"
         else:
             return f"edit_{res}_other"
+
+    elif use_case == "dev":
+        if not dev_type:
+            raise ValueError("Missing 'dev_type' for development use case.")
+        
+        dev_map = {
+            "web": "web",
+            "mobile": "mobile",
+            "game": "game",
+            "data science": "datasci"
+        }
+
+        dev_type_normalized = dev_map.get(dev_type.lower())
+        if not dev_type_normalized:
+            raise ValueError(f"Invalid dev_type: {dev_type}")
+        
+        return f"dev_{dev_type_normalized}"
 
     else:
         raise ValueError(f"Unknown use case: {use_case}")

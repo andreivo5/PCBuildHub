@@ -99,7 +99,7 @@ def downgrade_psu(comps, level, psu_candidates, partial_build, resolution_is_hig
         return comps, False
 
     current_psu = comps[psu_idx]
-    if use_case == "editing":
+    if use_case == ["editing", "dev"]:
         headroom_levels = [1.3, 1.15]
     else:
         headroom_levels = [1.5, 1.25] if resolution_is_high else [1.3, 1.15]
@@ -134,7 +134,7 @@ def downgrade_cooler(comps, level, cooler_candidates, use_case="gaming"):
     current_cooler = comps[cooler_idx]
     candidate = cooler_candidates[level]
 
-    if use_case == "editing" and candidate.type.lower() == "liquid":
+    if use_case == ["editing", "dev"] and candidate.type.lower() == "liquid":
         return comps, False
 
     if candidate != current_cooler:
