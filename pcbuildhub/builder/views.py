@@ -44,12 +44,18 @@ def view_build(request, build_id):
         elif usage_ratio > 0.9:
             power_status = 'warning'
 
+    components = [
+        build.cpu, build.gpu, build.motherboard, build.ram,
+        build.storage, build.case, build.psu, build.cooler
+    ]
+    total_price = sum(c.min_price for c in components if c and c.min_price)
+
     context = {
         'build': build,
         'total_power_draw': total_power_draw,
-        'power_status': power_status
+        'power_status': power_status,
+        'total_price': total_price
     }
-
     return render(request, 'create.html', context)
 
 

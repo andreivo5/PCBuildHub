@@ -4,7 +4,6 @@ from .models import CPU, GPU, Case, Cooler, RAM, Motherboard, PSU, Storage
 from builder.models import PCBuild
 from builder.compatibility import case_compatibility, psu_compatibility, estimate_total_power
 from django.db.models import Q
-from .filters import apply_filters, apply_sorting
 
 def components_page(request):
     return render(request, 'components.html')
@@ -20,15 +19,8 @@ model_mapping = {
     'cooler': (Cooler, 'CPU Cooler')
 }
 
-def get_min_offer_price(offers):
-    try:
-        return min(float(o['price']) for o in offers) if offers else None
-    except (KeyError, ValueError, TypeError):
-        return None
-
 def component_list(request, component_type, build_id=None, component_id=None):
     
-    # Pretty display names for the webpage
     display_names = {
         'cpu': 'CPUs',
         'gpu': 'GPUs',
@@ -144,10 +136,6 @@ def component_list(request, component_type, build_id=None, component_id=None):
 
     """
 
-    # Minimum price logic
-    for c in components:
-        c.min_price = get_min_offer_price(getattr(c, 'offers', None))
-
     # Pagination logic
     paginator = Paginator(components, 30)
     product_count = components.count()
@@ -161,8 +149,6 @@ def component_list(request, component_type, build_id=None, component_id=None):
         'component_display_name': display_names[component_type],
         'build': build,
         'product_count': product_count,
-        #'filters': request.GET,
-        #'filter_choices': filter_choices
     }
 
     return render(request, 'component_list.html', context)

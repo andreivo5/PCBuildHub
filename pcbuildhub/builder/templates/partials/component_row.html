@@ -1,0 +1,32 @@
+<tr>
+    <td>{{ label }}</td>
+    <td class ="text-start">
+      {% if component %}
+        <img src="{{ component.image }}" class="img-thumbnail me-2" style="width: 50px; height: 50px; object-fit: contain;" onerror="this.onerror=null; this.src='https://via.placeholder.com/50';">
+        <a href="{% url 'component_detail' type component.id %}" class="text-decoration-none text-dark">
+            {{ component.name }}
+        </a>
+      {% else %}
+        Not Selected
+      {% endif %}
+    </td>
+    <td>
+        {% if type == 'cpu' and component.cpu_mark %}
+          CPU Mark: {{ component.cpu_mark }}
+        {% elif type == 'gpu' and component.g3d_mark %}
+          G3D Mark: {{ component.g3d_mark }}
+        {% else %}
+          —
+        {% endif %}
+    </td>
+    <td>
+      {% if component and component.min_price %}
+        €{{ component.min_price|floatformat:2 }}
+      {% else %}
+        N/A
+      {% endif %}
+    </td>
+    <td>
+      <a href="{% url 'component_with_build' type build.id %}" class="btn btn-primary">Change</a>
+    </td>
+  </tr>  
