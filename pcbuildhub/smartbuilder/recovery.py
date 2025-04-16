@@ -1,7 +1,8 @@
 from builder.models import Motherboard, RAM, Storage, PSU, Case, Cooler, PCBuild
 from .logging_config import logger
-from .utils import get_min_price, compatibility_filter
 from builder.compatibility import estimate_total_power
+from .helpers import get_min_price, compatibility_filter, price_ok
+
 
 # Function to downgrade each component in cycles, 1 step at a time, until the build fits the budget.
 def budget_recovery(build_components, numeric_budget, partial_build, candidates, use_case="gaming"):
@@ -77,8 +78,11 @@ def downgrade_ram(comps, level, ram_candidates):
         return comps, False
 
     new_ram = ram_candidates[level]
+    if not price_ok(new_ram):
+        return comps, False
+
     comps[ram_idx] = new_ram
-    logger.info(f"- RAM downgraded - to {new_ram.name} ({new_ram.size} GB) - Level {level}")
+    logger.info(f"- RAM downgraded - to {new_ram.name} ({new_ram.size} GB) - Level {level} (EUR{get_min_price(new_ram):.2f})")
     return comps, True
 
 # Function to downgrade storage from NVME 1tb to SATA 1tb to NVME 500gb to SATA 500gb to then HDD.
@@ -88,8 +92,11 @@ def downgrade_storage(comps, level, storage_candidates):
         return comps, False
 
     new_storage = storage_candidates[level]
+    if not price_ok(new_storage):
+        return comps, False
+
     comps[storage_idx] = new_storage
-    logger.info(f"- Storage downgraded - to {new_storage.name} ({new_storage.space} GB, {new_storage.type}) - Level {level}")
+    logger.info(f"- Storage downgraded - to {new_storage.name} ({new_storage.space} GB, {new_storage.type}) - Level {level} (EUR{get_min_price(new_storage):.2f})")
     return comps, True
 
 # Function to downgrade PSU by reducing headroom per use case, then by cheaper price.
@@ -99,14 +106,14 @@ def downgrade_psu(comps, level, psu_candidates, partial_build, resolution_is_hig
         return comps, False
 
     current_psu = comps[psu_idx]
-    if use_case == ["editing", "dev"]:
+    if use_case in ["editing", "dev"]:
         headroom_levels = [1.3, 1.15]
     else:
         headroom_levels = [1.5, 1.25] if resolution_is_high else [1.3, 1.15]
 
     if level < len(headroom_levels):
         required_power = int(estimate_total_power(partial_build) * headroom_levels[level])
-        viable = [p for p in psu_candidates if p.power >= required_power]
+        viable = [p for p in psu_candidates if p.power >= required_power and price_ok(p)]
         if viable:
             new_psu = viable[len(viable) // 2]
             if new_psu != current_psu:
@@ -118,9 +125,11 @@ def downgrade_psu(comps, level, psu_candidates, partial_build, resolution_is_hig
     list_index = level - len(headroom_levels)
     if list_index < len(psu_candidates):
         new_psu = psu_candidates[list_index]
+        if not price_ok(new_psu):
+            return comps, False
         if new_psu != current_psu:
             comps[psu_idx] = new_psu
-            logger.info(f"- PSU downgraded - to cheaper option: {new_psu.name} ({new_psu.power}W)")
+            logger.info(f"- PSU downgraded - to cheaper option: {new_psu.name} ({new_psu.power}W) (EUR{get_min_price(new_psu):.2f})")
             return comps, True
 
     return comps, False
@@ -134,12 +143,15 @@ def downgrade_cooler(comps, level, cooler_candidates, use_case="gaming"):
     current_cooler = comps[cooler_idx]
     candidate = cooler_candidates[level]
 
-    if use_case == ["editing", "dev"] and candidate.type.lower() == "liquid":
+    if not price_ok(candidate):
+        return comps, False
+
+    if use_case in ["editing", "dev"] and candidate.type.lower() == "liquid":
         return comps, False
 
     if candidate != current_cooler:
         comps[cooler_idx] = candidate
-        logger.info(f"- Cooler downgraded - to {candidate.name} ({candidate.type}) - Level {level}")
+        logger.info(f"- Cooler downgraded - to {candidate.name} ({candidate.type}) - Level {level} (EUR{get_min_price(candidate):.2f})")
         return comps, True
 
     return comps, False
@@ -151,6 +163,9 @@ def downgrade_case(comps, level, case_candidates, partial_build):
         return comps, False
 
     candidate = case_candidates[level]
+    if not price_ok(candidate):
+        return comps, False
+
     test_build = PCBuild(
         cpu=partial_build.cpu,
         gpu=partial_build.gpu,
@@ -167,7 +182,7 @@ def downgrade_case(comps, level, case_candidates, partial_build):
         return comps, False
 
     comps[case_idx] = candidate
-    logger.info(f"- Case downgraded - to {candidate.name} - Level {level}")
+    logger.info(f"- Case downgraded - to {candidate.name} - Level {level} (EUR{get_min_price(candidate):.2f})")
     return comps, True
 
 # Function to downgrade motherboard from expensive to cheaper, maintaining compatibility.
@@ -177,11 +192,13 @@ def downgrade_motherboard(comps, level, mobo_candidates, partial_build):
         return comps, False
 
     candidate = mobo_candidates[level]
-    current_ram = partial_build.ram
+    if not price_ok(candidate):
+        return comps, False
 
+    current_ram = partial_build.ram
     if current_ram and candidate.ram_type and candidate.ram_type not in current_ram.type:
         return comps, False
 
     comps[mobo_idx] = candidate
-    logger.info(f"- Motherboard downgraded - to {candidate.name} ({candidate.ram_type}) - Level {level}")
+    logger.info(f"- Motherboard downgraded - to {candidate.name} ({candidate.ram_type}) - Level {level} (EUR{get_min_price(candidate):.2f})")
     return comps, True

@@ -117,11 +117,20 @@
         </div>
 
         <h4>Budget</h4>
-        <div class="row my-3">
-            {% for b in budgets %}
-            <div class="col-auto">
-                <button class="btn btn-outline-primary" type="button" onclick="selectBudget('{{ b.value }}', event)" data-type="budget">{{ b.label }}</button>
-            </div>
+        <div class="row my-3" id="budget-section">
+            {% for case, budgets in budgets_by_use_case.items %}
+                <div class="budget-group" id="budget-{{ case|lower }}" style="display: none;">
+                    {% for b in budgets %}
+                    <div class="col-auto">
+                        <button class="btn btn-outline-primary"
+                                type="button"
+                                onclick="selectBudget('{{ b.value }}', event)"
+                                data-type="budget">
+                            {{ b.label }}
+                        </button>
+                    </div>
+                    {% endfor %}
+                </div>
             {% endfor %}
         </div>
 
@@ -148,6 +157,10 @@
         document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
         const section = document.getElementById("section-" + use_case_value);
         if (section) section.classList.add("active");
+
+        document.querySelectorAll('.budget-group').forEach(group => group.style.display = "none");
+        const budgetGroup = document.getElementById("budget-" + use_case_value);
+        if (budgetGroup) budgetGroup.style.display = "flex";
     
         console.log("[USE CASE]", use_case_value);
     }    
