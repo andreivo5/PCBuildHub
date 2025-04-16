@@ -1,58 +1,94 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PCBuildHub - Home</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            background-color: rgb(231, 236, 255);
-            font-family: Arial, sans-serif;
+            background-image: url("{% static 'images/bg.png' %}");
+            background-size: cover;
+            background-position: center;
+            height: 100vh;
+            margin: 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .blur-overlay {
+            backdrop-filter: blur(6px);
+            background-color: rgba(0, 0, 0, 0.4);
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%;
+            height: 100%;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+        }
+
+        .main-box {
+            background-color: #111;
+            padding: 50px;
+            border-radius: 12px;
             text-align: center;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.6);
         }
-        .container {
-            background: white;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-            max-width: 500px;
-        }
+
         h1 {
-            color: #2c3e50;
-            font-weight: 600;
+            font-size: 3rem;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 40px;
         }
-        .btn-primary {
-            background-color: #2980b9;
-            border: none;
-            padding: 12px 20px;
+
+        .btn-custom {
+            width: 220px;
+            margin: 10px auto;
             font-size: 18px;
-            border-radius: 5px;
-            transition: 0.3s;
-        }
-        .btn-primary:hover {
-            background-color: #1f6690;
+            padding: 12px;
+            background-color: #6c5ce7;
+            border: none;
+            color: white;
+            transition: background-color 0.3s ease;
+        }        
+
+        .btn-custom:hover {
+            background-color: #5a4bcf;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1 class="text-center my-4">Welcome to PCBuildHub</h1>
-        <div class="text-center mb-3">
-            <a href="{% url 'create_build' %}" class="btn btn-primary btn-lg">
-                Create New Build
-            </a>
+    <div class="blur-overlay">
+        <div class="main-box">
+            <h1>PCBuildHub</h1>
+            <div class="d-grid gap-3">
+            <button type="button" class="btn btn-custom" data-bs-toggle="modal" data-bs-target="#newBuildModal">
+                New Build
+            </button>
+            <a href="{% url 'upgrade_build' %}" class="btn btn-custom">Upgrade Build</a>
+            <a href="{% url 'components' %}" class="btn btn-custom">View Components</a>
+            </div>
         </div>
-        <div class="text-center">
-            <a href="{% url 'components' %}" class="btn btn-secondary btn-lg">
-                View All Components
-            </a>
+    </div>
+    <!-- New Build Modal -->
+    <div class="modal fade" id="newBuildModal" tabindex="-1" aria-labelledby="newBuildModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-dark text-white">
+                <div class="modal-header border-secondary justify-content-center">
+                    <h5 class="modal-title text-center w-100" id="newBuildModalLabel">Start a New Build</h5>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="d-flex justify-content-center gap-3">
+                        <a href="{% url 'create_build' %}" class="btn btn-custom flex-fill">Build From Scratch</a>
+                        <a href="{% url 'smart_builder' %}" class="btn btn-custom flex-fill">Smart Builder</a>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </body>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </html>

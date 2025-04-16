@@ -1,181 +1,74 @@
+{% load static %}
 {% load math_filters %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Build | PCBuildHub</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        .progress-bar {
-            font-weight: bold;
-        }
-    </style>    
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your PC Build | PCBuildHub</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .progress-bar {
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
-    <div class="container mt-5">
-        <h1 class="text-center">New PC Build</h1>
-        <p><strong>Shareable Link:</strong> 
-            <a href="{{ request.build_absolute_uri }}">{{ request.build_absolute_uri }}</a>
-        </p>
-        {% if total_power_draw %}
-        <div class="mt-4">
-            <h5>Estimated Power Draw</h5>
-            <div class="progress" style="height: 30px;">
-                <div 
-                    class="progress-bar 
-                        {% if power_status == 'danger' %}bg-danger
-                        {% elif power_status == 'warning' %}bg-warning
-                        {% else %}bg-success{% endif %}" 
-                    role="progressbar"
-                    style="width: {% if build.psu %}{{ total_power_draw|floatformat:0|divisibleby:build.psu.power|mul:100|floatformat:0 }}%{% else %}100%{% endif %};">
+  <div class="container mt-5">
+    <h1 class="text-center">Your PC Build</h1>
+    <p><strong>Shareable Link:</strong> <a href="{{ request.build_absolute_uri }}">{{ request.build_absolute_uri }}</a></p>
 
-                    {% if build.psu %}
-                        {{ total_power_draw }}W / {{ build.psu.power }}W
-                    {% else %}
-                        {{ total_power_draw }}W (No PSU Selected)
-                    {% endif %}
-                </div>
-            </div>
+    {% if total_power_draw %}
+    <div class="mt-4">
+      <h5>Estimated Power Draw</h5>
+      <div class="progress" style="height: 30px;">
+        <div class="progress-bar {% if power_status == 'danger' %}bg-danger{% elif power_status == 'warning' %}bg-warning{% else %}bg-success{% endif %}"
+             role="progressbar"
+             style="width: {% if build.psu %}{{ total_power_draw|floatformat:0|divisibleby:build.psu.power|mul:100|floatformat:0 }}%{% else %}100%{% endif %};">
+          {% if build.psu %}
+            {{ total_power_draw }}W / {{ build.psu.power }}W
+          {% else %}
+            {{ total_power_draw }}W (No PSU Selected)
+          {% endif %}
         </div>
-        {% endif %}
-
-        <h3>Select Your Components</h3>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Component</th>
-                    <th>Selection</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>CPU</td>
-                    <td>
-                        {% if build.cpu %}
-                            <img src="{{ build.cpu.image }}" 
-                                 class="img-thumbnail me-2" 
-                                 style="width: 50px; height: 50px;"
-                                 onerror="this.onerror=null; this.src='https://via.placeholder.com/50';">
-                            {{ build.cpu.name }}
-                        {% else %}
-                            Not Selected
-                        {% endif %}
-                    </td>
-                    <td><a href="{% url 'component_with_build' 'cpu' build.id %}" class="btn btn-primary">Choose CPU</a></td>
-                </tr>
-                <tr>
-                    <td>GPU</td>
-                    <td>
-                        {% if build.gpu %}
-                            <img src="{{ build.gpu.image }}" 
-                                 class="img-thumbnail me-2" 
-                                 style="width: 50px; height: 50px;"
-                                 onerror="this.onerror=null; this.src='https://via.placeholder.com/50';">
-                            {{ build.gpu.name }}
-                        {% else %}
-                            Not Selected
-                        {% endif %}
-                    </td>
-                    <td><a href="{% url 'component_with_build' 'gpu' build.id %}" class="btn btn-primary">Choose GPU</a></td>
-                </tr>
-                <tr>
-                    <td>Motherboard</td>
-                    <td>
-                        {% if build.motherboard %}
-                            <img src="{{ build.motherboard.image }}" 
-                                 class="img-thumbnail me-2" 
-                                 style="width: 50px; height: 50px;"
-                                 onerror="this.onerror=null; this.src='https://via.placeholder.com/50';">
-                            {{ build.motherboard.name }}
-                        {% else %}
-                            Not Selected
-                        {% endif %}
-                    </td>
-                    <td><a href="{% url 'component_with_build' 'motherboard' build.id %}" class="btn btn-primary">Choose Motherboard</a></td>
-                </tr>
-                <tr>
-                    <td>RAM</td>
-                    <td>
-                        {% if build.ram %}
-                            <img src="{{ build.ram.image }}" 
-                                 class="img-thumbnail me-2" 
-                                 style="width: 50px; height: 50px;"
-                                 onerror="this.onerror=null; this.src='https://via.placeholder.com/50';">
-                            {{ build.ram.name }}
-                        {% else %}
-                            Not Selected
-                        {% endif %}
-                    </td>
-                    <td><a href="{% url 'component_with_build' 'ram' build.id %}" class="btn btn-primary">Choose RAM</a></td>
-                </tr>
-                <tr>
-                    <td>Storage</td>
-                    <td>
-                        {% if build.storage %}
-                            <img src="{{ build.storage.image }}" 
-                                 class="img-thumbnail me-2" 
-                                 style="width: 50px; height: 50px;"
-                                 onerror="this.onerror=null; this.src='https://via.placeholder.com/50';">
-                            {{ build.storage.name }}
-                        {% else %}
-                            Not Selected
-                        {% endif %}
-                    </td>
-                    <td><a href="{% url 'component_with_build' 'storage' build.id %}" class="btn btn-primary">Choose Storage</a></td>
-                </tr>
-                <tr>
-                    <td>Case</td>
-                    <td>
-                        {% if build.case %}
-                            <img src="{{ build.case.image }}" 
-                                 class="img-thumbnail me-2" 
-                                 style="width: 50px; height: 50px;"
-                                 onerror="this.onerror=null; this.src='https://via.placeholder.com/50';">
-                            {{ build.case.name }}
-                        {% else %}
-                            Not Selected
-                        {% endif %}
-                    </td>
-                    <td><a href="{% url 'component_with_build' 'case' build.id %}" class="btn btn-primary">Choose Case</a></td>
-                </tr>
-                <tr>
-                    <td>Power Supply</td>
-                    <td>
-                        {% if build.psu %}
-                            <img src="{{ build.psu.image }}" 
-                                 class="img-thumbnail me-2" 
-                                 style="width: 50px; height: 50px;"
-                                 onerror="this.onerror=null; this.src='https://via.placeholder.com/50';">
-                            {{ build.psu.name }}
-                        {% else %}
-                            Not Selected
-                        {% endif %}
-                    </td>
-                    <td><a href="{% url 'component_with_build' 'psu' build.id %}" class="btn btn-primary">Choose Power Supply</a></td>
-                </tr>
-                <tr>
-                    <td>Cooler</td>
-                    <td>
-                        {% if build.cooler %}
-                            <img src="{{ build.cooler.image }}" 
-                                 class="img-thumbnail me-2" 
-                                 style="width: 50px; height: 50px;"
-                                 onerror="this.onerror=null; this.src='https://via.placeholder.com/50';">
-                            {{ build.cooler.name }}
-                        {% else %}
-                            Not Selected
-                        {% endif %}
-                    </td>
-                    <td><a href="{% url 'component_with_build' 'cooler' build.id %}" class="btn btn-primary">Choose Cooler</a></td>
-                </tr>
-            </tbody>
-        </table>        
-        <div class="text-center mt-4">
-            <a href="{% url 'new_build' %}" class="btn btn-danger">New Build</a>
-            <a href="{% url 'home' %}" class="btn btn-secondary">Back to Home</a>
-        </div>        
+      </div>
     </div>
+    {% endif %}
+
+    <h3 class="mt-5">Selected Components</h3>
+    <div class="table-responsive">
+      <table class="table table-bordered align-middle text-center">
+        <thead class="table-dark">
+          <tr>
+            <th scope="col">Component</th>
+            <th scope="col" style="min-width: 300px;">Selection</th>
+            <th scope="col">Performance</th>
+            <th scope="col">Price</th>
+            <th scope="col">Action</th>
+            <th scope="col">Buy</th>
+          </tr>
+        </thead>
+        <tbody class="table-light">
+          {% include 'partials/component_row.html' with label='CPU' type='cpu' component=build.cpu link=cpu_link %}
+          {% include 'partials/component_row.html' with label='GPU' type='gpu' component=build.gpu link=gpu_link %}
+          {% include 'partials/component_row.html' with label='Motherboard' type='motherboard' component=build.motherboard link=motherboard_link %}
+          {% include 'partials/component_row.html' with label='RAM' type='ram' component=build.ram link=ram_link %}
+          {% include 'partials/component_row.html' with label='Storage' type='storage' component=build.storage link=storage_link %}
+          {% include 'partials/component_row.html' with label='Case' type='case' component=build.case link=case_link %}
+          {% include 'partials/component_row.html' with label='Power Supply' type='psu' component=build.psu link=psu_link %}
+          {% include 'partials/component_row.html' with label='Cooler' type='cooler' component=build.cooler link=cooler_link %}
+          <tr class="fw-bold bg-light">
+            <td colspan="2" class="text-end">Estimated Total:</td>
+            <td colspan="3">€{{ total_price|floatformat:2 }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="text-center mt-4">
+      <a href="{% url 'new_build' %}" class="btn btn-danger btn-lg me-2">New Build</a>
+      <a href="{% url 'home' %}" class="btn btn-secondary btn-lg">Back to Home</a>
+    </div>
+  </div>
 </body>
 </html>

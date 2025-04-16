@@ -29,6 +29,13 @@ class CPU(models.Model):
     @property
     def thread_count(self):
         return self.core_count * 2 if self.smt else self.core_count
+    
+    @property
+    def min_price(self):
+        try:
+            return min(float(o["price"]) for o in self.offers if "price" in o)
+        except:
+            return None
 
 class GPU(models.Model):
     name = models.CharField(max_length=255)
@@ -50,6 +57,13 @@ class GPU(models.Model):
     def __str__(self):
         return self.name
     
+    @property
+    def min_price(self):
+        try:
+            return min(float(o["price"]) for o in self.offers if "price" in o)
+        except:
+            return None
+    
 class Case(models.Model):
     name = models.CharField(max_length=255)
     image = models.URLField(max_length=500, null=True, blank=True)
@@ -63,6 +77,13 @@ class Case(models.Model):
 
     def __str__(self):
         return self.name
+    
+    @property
+    def min_price(self):
+        try:
+            return min(float(o["price"]) for o in self.offers if "price" in o)
+        except:
+            return None
 
 class Cooler(models.Model):
     name = models.CharField(max_length=255)
@@ -78,6 +99,13 @@ class Cooler(models.Model):
 
     def __str__(self):
         return self.name
+    
+    @property
+    def min_price(self):
+        try:
+            return min(float(o["price"]) for o in self.offers if "price" in o)
+        except:
+            return None
 
 class RAM(models.Model):
     name = models.CharField(max_length=255)
@@ -93,6 +121,13 @@ class RAM(models.Model):
 
     def __str__(self):
         return self.name
+    
+    @property
+    def min_price(self):
+        try:
+            return min(float(o["price"]) for o in self.offers if "price" in o)
+        except:
+            return None
 
 class Motherboard(models.Model):
     name = models.CharField(max_length=255)
@@ -112,6 +147,13 @@ class Motherboard(models.Model):
 
     def __str__(self):
         return self.name
+    
+    @property
+    def min_price(self):
+        try:
+            return min(float(o["price"]) for o in self.offers if "price" in o)
+        except:
+            return None
 
 class PSU(models.Model):
     name = models.CharField(max_length=255)
@@ -128,6 +170,13 @@ class PSU(models.Model):
     def __str__(self):
         return self.name
     
+    @property
+    def min_price(self):
+        try:
+            return min(float(o["price"]) for o in self.offers if "price" in o)
+        except:
+            return None
+    
 class Storage(models.Model):
     name = models.CharField(max_length=255)
     image = models.URLField(max_length=500, null=True, blank=True)
@@ -142,3 +191,10 @@ class Storage(models.Model):
 
     def __str__(self):
         return self.name
+    
+    @property
+    def min_price(self):
+        try:
+            return min(float(o["price"]) for o in self.offers if "price" in o)
+        except:
+            return None
