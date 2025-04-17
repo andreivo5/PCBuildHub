@@ -1,0 +1,100 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}PCBuildHub{% endblock %}</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-..." crossorigin="anonymous">
+
+  <!-- Global styles -->
+  <style>
+    body {
+      background-image: url("{% static 'images/bg.png' %}");
+      background-size: cover;
+      background-position: center;
+      position: relative;
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+    }
+    .blur-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      backdrop-filter: blur(6px);
+      background-color: rgba(0, 0, 0, 0.4);
+      z-index: 0;
+    }
+    .main-container {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .navbar {
+      background-color: #0d0f2d;
+    }
+    .navbar-brand,
+    .navbar-nav .nav-link {
+      color: #fff;
+      font-size: 1rem;
+      letter-spacing: 0.02em;
+      text-transform: none;
+      transition: color 0.2s ease;
+    }
+    .navbar-nav .nav-link:hover {
+      color: #bbc2ff;
+    }
+
+    footer {
+      background-color: #0d0f2d;
+      color: #ccc;
+    }
+  </style>
+
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+ 
+  <div class="blur-overlay"></div>
+  <div class="main-container">
+
+    <nav class="navbar navbar-expand-lg navbar-dark">
+      <div class="container-fluid px-0">
+        <a class="navbar-brand ms-3" href="{% url 'home' %}">PCBuildHub</a>
+        <button class="navbar-toggler me-3" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+          <ul class="navbar-nav me-3">
+            <li class="nav-item"><a class="nav-link" href="{% url 'login:login' %}">Login</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'login:signup' %}">Sign Up</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'create_build' %}">New Build</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'smart_builder' %}">Smart Build</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <main class="flex-grow-1 container py-4">
+      {% block content %}{% endblock %}
+    </main>
+
+    <footer class="text-center py-3 mt-auto">
+      &copy; 2025 PCBuildHub. All rights reserved.
+    </footer>
+
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-..." crossorigin="anonymous"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

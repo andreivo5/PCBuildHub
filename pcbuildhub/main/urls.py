@@ -9,4 +9,5 @@ urlpatterns = [
     path('create/', include('builder.urls')),
     path('smartbuild/', include('smartbuilder.urls')),
     path('upgrade/', include('upgrade.urls')),
+    path('login/', include('login.urls')),
 ]
