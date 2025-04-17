@@ -6,81 +6,104 @@
 
 {% block extra_css %}
 <style>
-  .container {
-    color: #eee;
+  :root {
+    --dark-indigo: #0d0f2d;
+    --light-indigo: #1a1f71;
+    --white: #fff;
+    --light-gray: #ddd;
+    --shadow: 0 3px 6px rgba(0,0,0,0.3);
+    --shadow-hover: 0 6px 15px rgba(0,0,0,0.4);
   }
 
+  /* Container & Typography */
+  .container { color: #eee; }
   .text-center.mt-4 {
-    margin-top: 2rem;
-    margin-bottom: 1.5rem;
+    margin: 2rem 0 1.5rem;
   }
-
   @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to   { opacity: 1; transform: translateY(0); }
   }
   .text-center.mt-4 h1,
   .text-center.mt-4 p {
-    animation: fadeIn 0.6s ease-in-out;
     opacity: 0;
-    animation-fill-mode: forwards;
-    animation-delay: 0.2s;
+    animation: fadeIn 0.6s ease-in-out 0.2s forwards;
   }
 
-  /* Force every table cell to dark indigo */
   .table > :not(caption) > * > * {
-    background-color: #0d0f2d !important;
-    border-color: #1a1f71  !important;
+    background-color: var(--dark-indigo) !important;
+    border-color: var(--light-indigo)  !important;
   }
-
-  /* Make sure header cells stay white-text, no stray borders */
   .table thead th {
-    background-color: #0d0f2d !important;
-    color: #fff                !important;
-    border-bottom: 2px solid #1a1f71 !important;
+    background-color: var(--dark-indigo) !important;
+    color: var(--white)             !important;
+    border-bottom: 2px solid var(--light-indigo) !important;
   }
-
-  /* Text in body cells */
   .table tbody td {
-    color: #ddd !important;
+    color: var(--light-gray) !important;
   }
-
-
+  .rename-form {
+    position: relative;
+    display: inline-block;
+  }
+  .build-name-input {
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid var(--white);
+    color: var(--white);
+    font-size: 3rem;
+    font-weight: bold;
+    text-align: center;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto 1rem;
+  }
+  .build-name-input:focus {
+    outline: none;
+    border-bottom-color: #bbc2ff;
+  }
+  .rename-form .build-name-input {
+    width: 500px;
+  }
+  .rename-form .btn-rename {
+    position: absolute;
+    top: 50%;
+    right: -150px;
+    transform: translateY(-50%);
+  }
   .btn-play,
-  .btn-secondary {
-    width: 8rem;
+  .btn-secondary,
+  .btn-save {
+    display: inline-block;
     margin: 0.5rem;
     padding: 0.6rem 1rem;
+    border: none;
     border-radius: 6px;
     font-size: 1rem;
     font-weight: 500;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.3);
-    transition: background 0.3s, transform 0.2s;
+    color: var(--white);
+    background: linear-gradient(135deg, var(--dark-indigo) 0%, var(--light-indigo) 100%);
+    box-shadow: var(--shadow);
+    white-space: nowrap;
+    text-align: center;
     text-decoration: none;
+    transition: background-position 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
   }
-  .btn-play,
-  .btn-secondary {
-    background: linear-gradient(135deg, #0d0f2d 0%, #1a1f71 100%);
-    color: #fff;
-  }
-  .btn-play:hover {
+  .btn-play:hover,
+  .btn-save:hover,
+  .btn-secondary:not(.btn-rename):hover {
     background-position: 100% 0;
     transform: translateY(-2px);
-    box-shadow: 0 6px 15px rgba(0,0,0,0.4);
-  }
-  .btn-secondary:hover {
-    background-position: 100% 0;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 15px rgba(0,0,0,0.4);
+    box-shadow: var(--shadow-hover);
   }
   .btn.btn-primary.btn-sm {
-    background: linear-gradient(135deg, #0d0f2d 0%, #1a1f71 100%);
-    color: #fff;
-    border: none;
     padding: 0.4rem 0.75rem;
     border-radius: 12px;
+    color: var(--white);
+    background: linear-gradient(135deg, var(--dark-indigo) 0%, var(--light-indigo) 100%);
     box-shadow: 0 4px 10px rgba(0,0,0,0.3);
     transition: background-position 0.5s ease, transform 0.3s ease, box-shadow 0.3s ease;
+    border: none;
   }
   .btn.btn-primary.btn-sm:hover {
     background-position: 100% 0;
@@ -92,15 +115,33 @@
 
 {% block content %}
 <div class="container">
-
   <div class="text-center mt-4">
-    <h1>Your PC Build</h1>
-    <p>
+    <form method="post"
+          action="{% url 'rename_build' build.id %}"
+          class="rename-form">
+      {% csrf_token %}
+      <input
+        type="text"
+        name="name"
+        value="{{ build.name }}"
+        class="build-name-input"
+        placeholder="Untitled Build"
+        autofocus
+      >
+      <button type="submit"
+              class="btn btn-secondary btn-sm btn-rename">
+        Rename
+      </button>
+    </form>
+  
+    <p class="mt-2">
       <strong>Shareable Link:</strong>
-      <a href="{{ request.build_absolute_uri }}" class="text-info">{{ request.build_absolute_uri }}</a>
+      <a href="{{ request.build_absolute_uri }}" class="text-info">
+        {{ request.build_absolute_uri }}
+      </a>
     </p>
   </div>
-
+  
   {% if total_power_draw %}
   <div class="mt-4">
     <h5 class="text-white">Estimated Power Draw</h5>
@@ -147,8 +188,20 @@
       </tbody>
     </table>
   </div>
-
   <div class="text-center mt-4">
+    {% if not user.is_authenticated %}
+      <a href="{% url 'login:login' %}?next={{ request.path }}"
+         class="btn-save">
+        Log in or Sign up to save this build
+      </a>
+    {% else %}
+      <form method="post" action="{% url 'save_build' build.id %}" class="d-inline">
+        {% csrf_token %}
+        <button type="submit" class="btn-save">
+          Save Build
+        </button>
+      </form>
+    {% endif %}
     <a href="{% url 'new_build' %}" class="btn-play">New Build</a>
     <a href="{% url 'home' %}" class="btn-secondary">Back to Home</a>
   </div>

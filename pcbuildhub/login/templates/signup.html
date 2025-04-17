@@ -1,12 +1,85 @@
 {% extends "base.html" %}
-{% load static %}
+{% block title %}Sign Up | PCBuildHub{% endblock %}
 
-{% block title %}Sign Up{% endblock %}
+{% block extra_css %}
+<style>
+  .login-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - 56px);
+  }
+  .login-box {
+    background: rgba(13,15,45,0.85);
+    padding: 2rem;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 400px;
+  }
+  .login-box h2,
+  .login-box p,
+  .login-box label {
+    color: #fff;
+  }
+  .login-box p label {
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+  .login-box input {
+    width: 100%;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid #1a1f71;
+    border-radius: 4px;
+    color: #fff;
+  }
+  .login-box input::placeholder {
+    color: rgba(255,255,255,0.6);
+  }
+  .btn-add {
+    background: linear-gradient(135deg, #1a1f71 0%, #0d0f2d 100%) !important;
+    color: #fff !important;
+    border: none !important;
+    padding: 0.75rem 1.5rem !important;
+    border-radius: 6px !important;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3) !important;
+    font-weight: 600 !important;
+    text-transform: uppercase;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .btn-add:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.4);
+  }
+  .login-box .text-info {
+    color: #8fb1ff !important;
+  }
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="container mt-5" style="max-width: 400px;">
-  <h1 class="mb-4 text-center">Sign Up</h1>
-  <!-- TODO: replace with actual signup form -->
-  <p class="text-center text-muted">(Signup form will go here)</p>
+<div class="login-page">
+  <div class="login-box">
+    <h2 class="mb-4 text-center">Create Account</h2>
+    <form method="post">
+      {% csrf_token %}
+      {{ form.non_field_errors }}
+      {% for field in form %}
+        <p>
+          {{ field.label_tag }}
+          {{ field }}
+          {% if field.errors %}
+            <span class="text-danger small">{{ field.errors|striptags }}</span>
+          {% endif %}
+        </p>
+      {% endfor %}
+      <button type="submit" class="btn-add w-100">Sign Up</button>
+    </form>
+    <p class="mt-3 text-center">
+      Already have an account?
+      <a href="{% url 'login:login' %}" class="text-info">Log in</a>
+    </p>
+  </div>
 </div>
 {% endblock %}

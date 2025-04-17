@@ -1,8 +1,9 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .models import PCBuild
 import random
 import string
 from builder.compatibility import estimate_total_power
+from django.contrib.auth.decorators import login_required
 
 def generate_short_id():
     return ''.join(random.choices(string.ascii_letters + string.digits, k=6))
@@ -20,6 +21,14 @@ def create_build(request):
         short_id = generate_short_id()
 
     new_build = PCBuild.objects.create(id=short_id)
+    if request.user.is_authenticated:
+        new_build.owner = request.user
+        new_build.save()
+    else:
+        guest = request.session.get("guest_builds", [])
+        if new_build.id not in guest:
+            guest.append(new_build.id)
+            request.session["guest_builds"] = guest
     request.session['current_build'] = str(new_build.id)
     return redirect(new_build.get_absolute_url())
 
@@ -82,3 +91,27 @@ def new_build(request):
         del request.session['current_build']
     return redirect('create_build')
 
+@login_required
+def save_build(request, build_id):
+    if request.method == "POST":
+        build = get_object_or_404(PCBuild, id=build_id)
+        build.owner = request.user
+        build.save()
+    return redirect("login:profile")
+
+@login_required
+def rename_build(request, build_id):
+    build = get_object_or_404(PCBuild, id=build_id, owner=request.user)
+    if request.method == "POST":
+        new_name = request.POST.get("name", "").strip() or "Untitled Build"
+        build.name = new_name
+        build.save()
+    return redirect("view_build", build_id=build.id)
+
+@login_required
+def delete_build(request, build_id):
+    build = get_object_or_404(PCBuild, id=build_id, owner=request.user)
+    if request.method == "POST":
+        build.delete()
+        return redirect("login:profile")
+    return redirect("login:profile")

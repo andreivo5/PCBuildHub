@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'smartbuilder',
     'upgrade',
     'prices',
-    'login',
+    'login.apps.LoginConfig',
 ]
 
 MIDDLEWARE = [
