@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% block title %}My Profile | PCBuildHub{% endblock %}
+
+{% block extra_css %}
+<style>
+  .profile-page {
+    display: flex;
+    justify-content: center;
+    padding: 2rem 1rem;
+  }
+  .profile-box {
+    background: rgba(13,15,45,0.85);
+    padding: 2rem;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 800px;
+    color: #fff;
+  }
+  .profile-box h1,
+  .profile-box h3 {
+    color: #fff;
+  }
+  .list-group-item {
+    background-color: #0d0f2d;
+    border: 1px solid #1a1f71;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .list-group-item a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: 500;
+  }
+  .list-group-item a:hover {
+    text-decoration: underline;
+  }
+  .btn-add {
+    background: linear-gradient(135deg, #0d0f2d 0%, #1a1f71 100%) !important;
+    color: #fff !important;
+    border: none !important;
+    padding: 0.75rem 1.5rem !important;
+    border-radius: 6px !important;
+    font-weight: 600 !important;
+    text-transform: uppercase;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3) !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .btn-add:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.4) !important;
+  }
+  .btn-secondary {
+    background-color: #7f8c8d !important;
+    color: #fff !important;
+    border: none !important;
+    border-radius: 6px !important;
+    padding: 0.5rem 1rem !important;
+    transition: background 0.3s ease, transform 0.2s ease;
+  }
+  .btn-secondary:hover {
+    background-color: #606b6e !important;
+  }
+  .profile-box .btn-secondary.btn-sm {
+    background: linear-gradient(135deg, #0d0f2d 0%, #1a1f71 100%);
+    color: #fff;
+    border: none;
+    padding: 0.4rem 0.75rem;
+    border-radius: 6px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+    transition: background-position 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    text-decoration: none;
+  }
+  .profile-box .btn-secondary.btn-sm:hover {
+    background-position: 100% 0;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.4);
+    color: #fff;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="profile-page">
+  <div class="profile-box">
+    <h1 class="mb-4">Hello, {{ request.user.username }}</h1>
+    <h3 class="mb-3">My Builds</h3>
+    <ul class="list-group mb-4">
+      {% for build in builds %}
+        <li class="list-group-item mb-2">
+            <a href="{{ build.get_absolute_url }}"
+            class="text-white">
+            {{ build.name|default:"Untitled Build" }}
+            </a>
+            <span>
+            <a href="{{ build.get_absolute_url }}"
+                class="btn btn-secondary btn-sm me-2">Edit</a>
+        
+            <form method="post"
+                    action="{% url 'delete_build' build.id %}"
+                    class="d-inline">
+                {% csrf_token %}
+                <button type="submit"
+                        class="btn btn-secondary btn-sm"
+                        onclick="return confirm('Delete this build?');">
+                Delete
+                </button>
+            </form>
+            </span>
+        </li>
+      {% empty %}
+        <li class="list-group-item text-center">
+          No saved builds yet.
+        </li>
+      {% endfor %}
+    </ul>
+    <a href="{% url 'create_build' %}" class="btn-add">Start a New Build</a>
+  </div>
+</div>
+{% endblock %}

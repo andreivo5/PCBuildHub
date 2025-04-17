@@ -1,7 +1,15 @@
 from django.db import models
+from django.conf import settings
 from components.models import CPU, GPU, RAM, Motherboard, PSU, Cooler, Case, Storage
 
 class PCBuild(models.Model):
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+        related_name="builds"
+    )
     id = models.CharField(max_length=6, primary_key=True, unique=True)
     name = models.CharField(max_length=255, default="Untitled Build")
     cpu = models.ForeignKey(CPU, on_delete=models.SET_NULL, null=True, blank=True)

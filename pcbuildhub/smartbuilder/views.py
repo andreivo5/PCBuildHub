@@ -156,6 +156,15 @@ def smart_builder_submit(request):
             case=components[6],
             cooler=components[7]
         )
+
+        if request.user.is_authenticated:
+            new_build.owner = request.user
+            new_build.save()
+        else:
+            guest = request.session.get("guest_builds", [])
+            if new_build.id not in guest:
+                guest.append(new_build.id)
+                request.session["guest_builds"] = guest
         request.session["current_build"] = str(new_build.id)
         logger.info(f"- BUILD ID - {new_build.id} created successfully.")
         return redirect(new_build.get_absolute_url())

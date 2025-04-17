@@ -1,263 +1,185 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ component_name }} List | PCBuildHub</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        .link-hover {
-            color: inherit;
-            text-decoration: none;
-            transition: color 0.2s ease, text-decoration 0.2s ease;
-        }
-        
-        .link-hover:hover {
-            color: #0a58ca;
-            text-decoration: underline;
-        }
-    </style>        
-</head>
-<body>
-    <div class="container mt-5">
-        <h1 class="text-center">Available {{ component_display_name }}:</h1>
-        <p class="text-center text-muted">{{ product_count }} Compatible Products</p>
+{% extends "base.html" %}
+{% load static %}
 
-        <!-- Search Bar -->
-        <form method="GET" class="mb-3 d-flex">
-            <input type="text" name="search" class="form-control me-2" placeholder="Search {{ component_display_name }}" value="{{ request.GET.search }}">
-            <button type="submit" class="btn btn-outline-primary">Search</button>
-        </form>        
+{% block title %}{{ component_display_name }} List | PCBuildHub{% endblock %}
 
-        <div class="table-responsive">
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th></th>  <!-- image column -->
-                        {% if component_name == "Gpu" %}
-                            <th>Name</th>
-                            <th>Model</th>
-                            <th>VRAM</th>
-                            <th>TDP</th>
-                            <th>G3D Mark</th>
-                            <th>Price</th>
-                        {% elif component_name == "Cpu" %}
-                            <th>Name</th>
-                            <th>Core Count</th>
-                            <th>Speed</th>
-                            <th>Socket</th>
-                            <th>TDP</th>
-                            <th>CPU Mark</th>
-                            <th>Price</th>
-                            {% elif component_name == "Motherboard" %}
-                            <th>Name</th>
-                            <th>Socket</th>
-                            <th>Size</th>
-                            <th>RAM Type</th>
-                            <th>Price</th>                        
-                        {% elif component_name == "Ram" %}
-                            <th>Name</th>
-                            <th>Type</th>
-                            <th>Size</th>
-                            <th>Price</th>
-                        {% elif component_name == "Storage" %}
-                            <th>Name</th>
-                            <th>Size</th>
-                            <th>Type</th>
-                            <th>Price</th>
-                        {% elif component_name == "Psu" %}
-                            <th>Name</th>
-                            <th>Size</th>
-                            <th>Power</th>
-                            <th>Price</th>
-                        {% elif component_name == "Case" %}
-                            <th>Name</th>
-                            <th>Size</th>
-                            <th>Price</th>
-                        {% elif component_name == "Cooler" %}
-                            <th>Name</th>
-                            <th>Type</th>
-                            <th>Price</th>
-                        {% else %}
-                            <th>Name</th>
-                        {% endif %}
-                        {% if build %}<th>Action</th>{% endif %}
-                    </tr>
-                </thead>                
-                <tbody>
-                    {% for component in components %}
-                    <tr>
-                        <td>
-                            <img src="{{ component.image }}" alt="No Image Available" class="img-thumbnail"
-                                 style="width: 80px; height: 80px;"
-                                 onerror="this.onerror=null; this.src='https://via.placeholder.com/80';">
-                        </td>
-                
-                        {% if component_name == "Gpu" %}
-                            <td>
-                                <a href="{% if build %}{% url 'component_detail_with_build' component_name|lower component.id build.id %}{% else %}{% url 'component_detail' component_name|lower component.id %}{% endif %}"
-                                class="fw-semibold link-hover">
-                                    {{ component.name }}
-                                </a>
-                            </td>
-                            <td>{{ component.model }}</td>
-                            <td>{{ component.vram_gb }} GB</td>
-                            <td>{{ component.tdp }} W</td>
-                            <td>{{ component.g3d_mark }}</td>
-                            <td>
-                                {% if component.min_price %}
-                                  €{{ component.min_price|floatformat:2 }}
-                                {% else %}
-                                  N/A
-                                {% endif %}
-                            </td>                              
-                        {% elif component_name == "Cpu" %}
-                            <td>
-                                <a href="{% if build %}{% url 'component_detail_with_build' component_name|lower component.id build.id %}{% else %}{% url 'component_detail' component_name|lower component.id %}{% endif %}"
-                                class="fw-semibold link-hover">
-                                    {{ component.name }}
-                                </a>
-                            </td>
-                            <td>{{ component.core_count }}</td>
-                            <td>{{ component.speed }} GHz</td>
-                            <td>{{ component.socket }}</td>
-                            <td>{{ component.tdp }} W</td>
-                            <td>{{ component.cpu_mark }}</td>
-                            <td>
-                                {% if component.min_price %}
-                                  €{{ component.min_price|floatformat:2 }}
-                                {% else %}
-                                  N/A
-                                {% endif %}
-                            </td>
-                        {% elif component_name == "Motherboard" %}
-                            <td>
-                                <a href="{% if build %}{% url 'component_detail_with_build' component_name|lower component.id build.id %}{% else %}{% url 'component_detail' component_name|lower component.id %}{% endif %}"
-                                class="fw-semibold link-hover">
-                                    {{ component.name }}
-                                </a>
-                            </td>
-                            <td>{{ component.socket }}</td>
-                            <td>{{ component.size }}</td>
-                            <td>{{ component.ram_type }}</td>
-                            <td>
-                                {% if component.min_price %}
-                                  €{{ component.min_price|floatformat:2 }}
-                                {% else %}
-                                  N/A
-                                {% endif %}
-                            </td>                      
-                        {% elif component_name == "Ram" %}
-                            <td>
-                                <a href="{% if build %}{% url 'component_detail_with_build' component_name|lower component.id build.id %}{% else %}{% url 'component_detail' component_name|lower component.id %}{% endif %}"
-                                class="fw-semibold link-hover">
-                                    {{ component.name }}
-                                </a>
-                            </td>
-                            <td>{{ component.type }}</td>
-                            <td>{{ component.size }} GB</td>
-                            <td>
-                                {% if component.min_price %}
-                                  €{{ component.min_price|floatformat:2 }}
-                                {% else %}
-                                  N/A
-                                {% endif %}
-                            </td>
-                        {% elif component_name == "Storage" %}
-                            <td>
-                                <a href="{% if build %}{% url 'component_detail_with_build' component_name|lower component.id build.id %}{% else %}{% url 'component_detail' component_name|lower component.id %}{% endif %}"
-                                class="fw-semibold link-hover">
-                                    {{ component.name }}
-                                </a>
-                            </td>
-                            <td>{{ component.space }} GB</td>
-                            <td>{{ component.type }}</td>
-                            <td>
-                                {% if component.min_price %}
-                                  €{{ component.min_price|floatformat:2 }}
-                                {% else %}
-                                  N/A
-                                {% endif %}
-                            </td>
-                        {% elif component_name == "Psu" %}
-                            <td>
-                                <a href="{% if build %}{% url 'component_detail_with_build' component_name|lower component.id build.id %}{% else %}{% url 'component_detail' component_name|lower component.id %}{% endif %}"
-                                class="fw-semibold link-hover">
-                                    {{ component.name }}
-                                </a>
-                            </td>
-                            <td>{{ component.size }}</td>
-                            <td>{{ component.power }} W</td>
-                            <td>
-                                {% if component.min_price %}
-                                  €{{ component.min_price|floatformat:2 }}
-                                {% else %}
-                                  N/A
-                                {% endif %}
-                            </td>
-                        {% elif component_name == "Case" %}
-                            <td>
-                                <a href="{% if build %}{% url 'component_detail_with_build' component_name|lower component.id build.id %}{% else %}{% url 'component_detail' component_name|lower component.id %}{% endif %}"
-                                class="fw-semibold link-hover">
-                                    {{ component.name }}
-                                </a>
-                            </td>
-                            <td>{{ component.size }}</td>
-                            <td>
-                                {% if component.min_price %}
-                                  €{{ component.min_price|floatformat:2 }}
-                                {% else %}
-                                  N/A
-                                {% endif %}
-                            </td>
-                        {% elif component_name == "Cooler" %}
-                            <td>
-                                <a href="{% if build %}{% url 'component_detail_with_build' component_name|lower component.id build.id %}{% else %}{% url 'component_detail' component_name|lower component.id %}{% endif %}"
-                                class="fw-semibold link-hover">
-                                    {{ component.name }}
-                                </a>
-                            </td>
-                            <td>{{ component.type }}</td>
-                            <td>
-                                {% if component.min_price %}
-                                  €{{ component.min_price|floatformat:2 }}
-                                {% else %}
-                                  N/A
-                                {% endif %}
-                            </td>
-                        {% else %}
-                            <td>
-                                <a href="{% if build %}{% url 'component_detail_with_build' component_name|lower component.id build.id %}{% else %}{% url 'component_detail' component_name|lower component.id %}{% endif %}"
-                                class="fw-semibold link-hover">
-                                    {{ component.name }}
-                                </a>
-                            </td>
-                        {% endif %}
-                
-                        {% if build %}
-                        <td>
-                            <a href="{% url 'select_component' component_name|lower build.id component.id %}" class="btn btn-success btn-sm">Select</a>
-                        </td>
-                        {% endif %}
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="8" class="text-center">No {{ component_display_name }} available at the moment.</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>                
-            </table>
-        </div>
+{% block extra_css %}
+<style>
+  .search-bar .form-control {
+    border-radius: 8px 0 0 8px;
+  }
+  .search-bar .btn-outline-primary {
+    border-radius: 0 8px 8px 0;
+    background: linear-gradient(135deg, #0d0f2d 0%, #1a1f71 100%);
+    color: #fff;
+    border: none;
+    transition: background-position 0.4s ease, transform 0.2s ease;
+  }
+  .search-bar .btn-outline-primary:hover {
+    background-position: 100% 0;
+    transform: translateY(-2px);
+  }
 
-        {% include 'pagination.html' %}
+  .table > :not(caption) > * > * {
+    background-color: #0d0f2d !important;
+    border-color: #1a1f71 !important;
+  }
 
-        <div class="text-center mt-4">
-            {% if build %}
-                <a href="{{ build.get_absolute_url }}" class="btn btn-secondary">Back to Build</a>
-            {% else %}
-                <a href="{% url 'components' %}" class="btn btn-secondary">Back to Components</a>
-            {% endif %}
-        </div>
-    </div>
-</body>
-</html>
+  .table thead th {
+    background-color: #0d0f2d !important;
+    color: #fff !important;
+    border-bottom: 2px solid #1a1f71 !important;
+  }
+
+  .table tbody td {
+    color: #ddd !important;
+  }
+
+  .table tbody td a {
+    color: #fff !important;
+    text-decoration: none !important;
+  }
+
+  .table tbody td a:hover {
+    text-decoration: underline !important;
+  }
+
+  .text-muted {
+    color: #eee !important;
+  }
+
+  .btn-back {
+    background: linear-gradient(135deg, #0d0f2d 0%, #1a1f71 100%);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 0.6rem 1.2rem;
+    font-weight: 500;
+    transition: background-position 0.4s ease, transform 0.2s ease;
+    text-decoration: none;
+  }
+  .btn-back:hover {
+    background-position: 100% 0;
+    transform: translateY(-2px);
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="text-center mb-4">
+    <h1 class="text-white">Available {{ component_display_name }}</h1>
+    <p class="text-muted">{{ product_count }} Compatible Products</p>
+  </div>
+
+  <!-- Search Bar -->
+  <form method="GET" class="search-bar d-flex justify-content-center mb-4">
+    <input type="text" name="search" class="form-control" placeholder="Search {{ component_display_name }}" value="{{ request.GET.search }}">
+    <button type="submit" class="btn btn-outline-primary">Search</button>
+  </form>
+
+  <!-- Components Table -->
+  <div class="table-responsive">
+    <table class="table table-striped table-custom align-middle text-center">
+      <thead>
+        <tr>
+          <th></th>
+          {% if component_name == "Gpu" %}
+            <th>Name</th><th>Model</th><th>VRAM</th><th>TDP</th><th>G3D Mark</th><th>Price</th>
+          {% elif component_name == "Cpu" %}
+            <th>Name</th><th>Core Count</th><th>Speed</th><th>Socket</th><th>TDP</th><th>CPU Mark</th><th>Price</th>
+          {% elif component_name == "Motherboard" %}
+            <th>Name</th><th>Socket</th><th>Size</th><th>RAM Type</th><th>Price</th>
+          {% elif component_name == "Ram" %}
+            <th>Name</th><th>Type</th><th>Size</th><th>Price</th>
+          {% elif component_name == "Storage" %}
+            <th>Name</th><th>Size</th><th>Type</th><th>Price</th>
+          {% elif component_name == "Psu" %}
+            <th>Name</th><th>Size</th><th>Power</th><th>Price</th>
+          {% elif component_name == "Case" %}
+            <th>Name</th><th>Size</th><th>Price</th>
+          {% elif component_name == "Cooler" %}
+            <th>Name</th><th>Type</th><th>Price</th>
+          {% else %}
+            <th>Name</th>
+          {% endif %}
+          {% if build %}<th>Action</th>{% endif %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for component in components %}
+        <tr>
+          <td>
+            <img src="{{ component.image }}" class="img-thumbnail" style="width:80px;height:80px;object-fit:contain;" onerror="this.onerror=null;this.src='https://via.placeholder.com/80';">
+          </td>
+
+          {% if component_name == "Gpu" %}
+            <td><a href="{% if build %}{% url 'component_detail_with_build' component_name|lower component.id build.id %}{% else %}{% url 'component_detail' component_name|lower component.id %}{% endif %}" class="link-hover">{{ component.name }}</a></td>
+            <td>{{ component.model }}</td>
+            <td>{{ component.vram_gb }} GB</td>
+            <td>{{ component.tdp }} W</td>
+            <td>{{ component.g3d_mark }}</td>
+            <td>€{{ component.min_price|floatformat:2 }}</td>
+          {% elif component_name == "Cpu" %}
+            <td><a href="{% if build %}{% url 'component_detail_with_build' component_name|lower component.id build.id %}{% else %}{% url 'component_detail' component_name|lower component.id %}{% endif %}" class="link-hover">{{ component.name }}</a></td>
+            <td>{{ component.core_count }}</td>
+            <td>{{ component.speed }} GHz</td>
+            <td>{{ component.socket }}</td>
+            <td>{{ component.tdp }} W</td>
+            <td>{{ component.cpu_mark }}</td>
+            <td>€{{ component.min_price|floatformat:2 }}</td>
+          {% elif component_name == "Motherboard" %}
+            <td><a href="{% if build %}{% url 'component_detail_with_build' component_name|lower component.id build.id %}{% else %}{% url 'component_detail' component_name|lower component.id %}{% endif %}" class="link-hover">{{ component.name }}</a></td>
+            <td>{{ component.socket }}</td>
+            <td>{{ component.size }}</td>
+            <td>{{ component.ram_type }}</td>
+            <td>€{{ component.min_price|floatformat:2 }}</td>
+          {% elif component_name == "Ram" %}
+            <td><a href="{% if build %}{% url 'component_detail_with_build' component_name|lower component.id build.id %}{% else %}{% url 'component_detail' component_name|lower component.id %}{% endif %}" class="link-hover">{{ component.name }}</a></td>
+            <td>{{ component.type }}</td>
+            <td>{{ component.size }} GB</td>
+            <td>€{{ component.min_price|floatformat:2 }}</td>
+          {% elif component_name == "Storage" %}
+            <td><a href="{% if build %}{% url 'component_detail_with_build' component_name|lower component.id build.id %}{% else %}{% url 'component_detail' component_name|lower component.id %}{% endif %}" class="link-hover">{{ component.name }}</a></td>
+            <td>{{ component.space }} GB</td>
+            <td>{{ component.type }}</td>
+            <td>€{{ component.min_price|floatformat:2 }}</td>
+          {% elif component_name == "Psu" %}
+            <td><a href="{% if build %}{% url 'component_detail_with_build' component_name|lower component.id build.id %}{% else %}{% url 'component_detail' component_name|lower component.id %}{% endif %}" class="link-hover">{{ component.name }}</a></td>
+            <td>{{ component.size }}</td>
+            <td>{{ component.power }} W</td>
+            <td>€{{ component.min_price|floatformat:2 }}</td>
+          {% elif component_name == "Case" %}
+            <td><a href="{% if build %}{% url 'component_detail_with_build' component_name|lower component.id build.id %}{% else %}{% url 'component_detail' component_name|lower component.id %}{% endif %}" class="link-hover">{{ component.name }}</a></td>
+            <td>{{ component.size }}</td>
+            <td>€{{ component.min_price|floatformat:2 }}</td>
+          {% elif component_name == "Cooler" %}
+            <td><a href="{% if build %}{% url 'component_detail_with_build' component_name|lower component.id build.id %}{% else %}{% url 'component_detail' component_name|lower component.id %}{% endif %}" class="link-hover">{{ component.name }}</a></td>
+            <td>{{ component.type }}</td>
+            <td>€{{ component.min_price|floatformat:2 }}</td>
+          {% else %}
+            <td><a href="{% if build %}{% url 'component_detail_with_build' component_name|lower component.id build.id %}{% else %}{% url 'component_detail' component_name|lower component.id %}{% endif %}" class="link-hover">{{ component.name }}</a></td>
+          {% endif %}
+
+          {% if build %}
+          <td><a href="{% url 'select_component' component_name|lower build.id component.id %}" class="btn btn-back btn-sm">Select</a></td>
+          {% endif %}
+        </tr>
+        {% empty %}
+        <tr><td colspan="{% if build %}8{% else %}7{% endif %}" class="text-center text-white">No {{ component_display_name }} available at the moment.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {% include 'pagination.html' %}
+
+  <div class="text-center mt-4">
+    {% if build %}
+      <a href="{{ build.get_absolute_url }}" class="btn btn-back">Back to Build</a>
+    {% else %}
+      <a href="{% url 'components' %}" class="btn btn-back">Back to Components</a>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

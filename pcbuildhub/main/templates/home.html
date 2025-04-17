@@ -1,94 +1,82 @@
+{% extends "base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PCBuildHub - Home</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-image: url("{% static 'images/bg.png' %}");
-            background-size: cover;
-            background-position: center;
-            height: 100vh;
-            margin: 0;
-            position: relative;
-            overflow: hidden;
-        }
 
-        .blur-overlay {
-            backdrop-filter: blur(6px);
-            background-color: rgba(0, 0, 0, 0.4);
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+{% block title %}PCBuildHub – Home{% endblock %}
 
-        .main-box {
-            background-color: #111;
-            padding: 50px;
-            border-radius: 12px;
-            text-align: center;
-            box-shadow: 0 0 30px rgba(0, 0, 0, 0.6);
-        }
+{% block extra_css %}
+<style>
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
 
-        h1 {
-            font-size: 3rem;
-            font-weight: bold;
-            color: #fff;
-            margin-bottom: 40px;
-        }
+  .home-container {
+    width: 60vw;
+    max-width: 600px;
+    height: 90vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+  }
 
-        .btn-custom {
-            width: 220px;
-            margin: 10px auto;
-            font-size: 18px;
-            padding: 12px;
-            background-color: #6c5ce7;
-            border: none;
-            color: white;
-            transition: background-color 0.3s ease;
-        }        
+  .home-container h1 {
+    color: #fff;
+    font-size: 3rem;
+    font-weight: bold;
+    margin-bottom: 2rem;
+    opacity: 0;
+    animation: fadeIn 0.6s forwards;
+    animation-delay: 0.5s;
+  }
 
-        .btn-custom:hover {
-            background-color: #5a4bcf;
-        }
-    </style>
-</head>
-<body>
-    <div class="blur-overlay">
-        <div class="main-box">
-            <h1>PCBuildHub</h1>
-            <div class="d-grid gap-3">
-            <button type="button" class="btn btn-custom" data-bs-toggle="modal" data-bs-target="#newBuildModal">
-                New Build
-            </button>
-            <a href="{% url 'upgrade_build' %}" class="btn btn-custom">Upgrade Build</a>
-            <a href="{% url 'components' %}" class="btn btn-custom">View Components</a>
-            </div>
-        </div>
+  .d-grid a {
+    opacity: 0;
+    animation: fadeIn 0.5s forwards;
+  }
+  .d-grid a:nth-child(1) { animation-delay: 0.7s; }
+  .d-grid a:nth-child(2) { animation-delay: 0.9s; }
+  .d-grid a:nth-child(3) { animation-delay: 1.1s; }
+
+  .btn-custom {
+    display: inline-block;
+    width: 100%;
+    padding: 16px;
+    font-size: 18px;
+    font-weight: 500;
+    color: #fff;
+    text-align: center;
+    text-decoration: none;
+    border: none;
+    border-radius: 12px;
+        background: linear-gradient(135deg, #0d0f2d 0%, #1a1f71 100%);
+    background-size: 200% 200%;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    transition: background-position 0.5s ease, transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .btn-custom:hover,
+  .btn-custom:focus {
+    color: #fff !important;
+    text-decoration: none;
+    background-position: 100% 0;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.4);
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-0">
+  <div class="home-container">
+    <h1>PCBuildHub</h1>
+    <div class="d-grid gap-4" style="width:100%;">
+      <a href="{% url 'create_build' %}" class="btn btn-custom">New Build</a>
+      <a href="{% url 'smart_builder' %}" class="btn btn-custom">Smart Build</a>
+      <a href="{% url 'components' %}" class="btn btn-custom">View Components</a>
     </div>
-    <!-- New Build Modal -->
-    <div class="modal fade" id="newBuildModal" tabindex="-1" aria-labelledby="newBuildModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content bg-dark text-white">
-                <div class="modal-header border-secondary justify-content-center">
-                    <h5 class="modal-title text-center w-100" id="newBuildModalLabel">Start a New Build</h5>
-                </div>
-                <div class="modal-body text-center">
-                    <div class="d-flex justify-content-center gap-3">
-                        <a href="{% url 'create_build' %}" class="btn btn-custom flex-fill">Build From Scratch</a>
-                        <a href="{% url 'smart_builder' %}" class="btn btn-custom flex-fill">Smart Builder</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</body>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</html>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}{% endblock %}
