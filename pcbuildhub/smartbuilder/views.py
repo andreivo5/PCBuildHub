@@ -1,22 +1,21 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse, HttpResponseRedirect
-from builder.models import CPU, GPU
+from django.http import HttpResponse
+from components.models import CPU, GPU, Motherboard, RAM, Cooler, PSU, Storage, Case
+from builder.models import PCBuild
 from .recommender.predict import predict_cpu_gpu_synergy
-from .utils import map_label, get_min_price, finish_smart_builder_flow, select_cpu_for_casual, select_gpu_for_casual, price_ok
+from .utils import map_label, get_min_price, generate_short_id, build_components_from_synergy
+from .helpers import get_min_price
 from .logging_config import logger
+from .recovery import budget_recovery
 
 def smart_builder_home(request):
     return render(request, 'smartbuild.html', {
-        'use_cases': ["Gaming", "Video Editing", "Development", "Casual"],
+        'use_cases': ["Gaming", "Video Editing", "Development"],
         'gaming_resolutions': ["1080p", "1440p", "4K"],
         'gaming_framerates': ["60", "120–144", "144+"],
         'editing_resolutions': ["1080p", "4K"],
         'editing_software': ["Premiere Pro", "DaVinci Resolve", "Other"],
         'dev_types': ["Web", "Mobile", "Game", "Data Science"],
-        'casual_primary_use': ["Web & media", "Light creative work", "Multitasking"],
-        'casual_tabs': ["Few", "Some", "Many"],
-        'casual_storage': ["Minimal", "Some", "A lot"],
-        'casual_size_pref': ["Quiet/Compact", "No preference"],
         'budgets_by_use_case': {
             "gaming": [
                 {"label": "<€1000", "value": "1000"},
@@ -28,18 +27,13 @@ def smart_builder_home(request):
             "editing": [
                 {"label": "<€1000", "value": "1000"},
                 {"label": "€1000–€2000", "value": "2000"},
-                {"label": "€2000+", "value": "999999"},
+                {"label": "€2000+", "value": "4000"},
             ],
             "dev": [
                 {"label": "<€1000", "value": "1000"},
                 {"label": "€1000–€2000", "value": "2000"},
-                {"label": "€2000+", "value": "999999"},
+                {"label": "€2000+", "value": "4000"},
             ],
-            "casual": [
-                {"label": "<€1000", "value": "1000"},
-                {"label": "€1000–€2000", "value": "2000"},
-                {"label": "€2000+", "value": "999999"},
-            ]
         }
     })
 
@@ -51,94 +45,119 @@ def smart_builder_submit(request):
     resolution = request.POST.get("resolution", "1080p")
     framerate = request.POST.get("framerate", "60")
     numeric_budget = int(request.POST.get("budget", 2000))
-    casual_inputs = {
-        "use": request.POST.get("casual_use", "").lower(),
-        "tabs": request.POST.get("casual_tabs", "").lower(),
-        "storage": request.POST.get("casual_storage", "").lower(),
-        "size_pref": request.POST.get("casual_size_pref", "").lower()
-    }
+    synergy_label = map_label(
+        use_case=use_case,
+        resolution=resolution,
+        framerate=framerate,
+        software=request.POST.get("editing_software", ""),
+        dev_type=request.POST.get("dev_type", "")
+    )
 
-    if use_case == "casual":
-        logger.info(f"SmartBuilder: UseCase={use_case}, Budget={numeric_budget}, Inputs={casual_inputs}")
-        chosen_cpu = select_cpu_for_casual(casual_inputs, numeric_budget)
-        chosen_gpu = select_gpu_for_casual(casual_inputs, chosen_cpu)
+    logger.info(f"SmartBuilder: UseCase={use_case}, Resolution={resolution}, FPS={framerate}, Label={synergy_label}, Budget={numeric_budget}")
 
-        if not chosen_cpu:
-            logger.warning("Casual builder: No valid CPU found.")
-            return HttpResponse("No valid CPU found for casual build.", status=404)
+    # (Step 1): GPU & CPU gathering, sorted by performance, deduplicating GPUs by model (lowest price)
+    raw_gpus = GPU.objects.exclude(g3d_mark__isnull=True).order_by("-g3d_mark")
+    gpu_models = {}
 
-    else:
-        synergy_label = map_label(
-            use_case=use_case,
-            resolution=resolution,
-            framerate=framerate,
-            software=request.POST.get("editing_software", ""),
-            dev_type=request.POST.get("dev_type", "")
-        )
-        logger.info(f"SmartBuilder: UseCase={use_case}, Resolution={resolution}, FPS={framerate}, Label={synergy_label}, Budget={numeric_budget}")
+    for g in raw_gpus:
+        price = get_min_price(g)
+        if not g.model or price < 30:
+            continue
+        current = gpu_models.get(g.model)
+        if not current or price < get_min_price(current):
+            gpu_models[g.model] = g
 
-        # (Step 1): GPU & CPU gathering, deduplicating GPUs by model, using lowest price option.
-        raw_gpus = GPU.objects.exclude(g3d_mark__isnull=True)
-        gpu_models = {}
+    unique_gpus = sorted(gpu_models.values(), key=lambda g: g.g3d_mark or 0, reverse=True)
+    raw_cpus = list(CPU.objects.exclude(cpu_mark__isnull=True).order_by("-cpu_mark"))
 
-        for g in raw_gpus:
-            if not g.model:
+    # (Step 2): Evaluate synergy for each CPU+GPU pair, stopping at max 100 combos with synergy 1.0
+    synergy_threshold = 0.999
+    combos = []
+    max_combos = 30
+    early_exit = False
+
+    for gpu in unique_gpus:
+        for cpu in raw_cpus:
+            gpu_price = get_min_price(gpu)
+            cpu_price = get_min_price(cpu)
+            if gpu_price + cpu_price > numeric_budget * 0.7:
+                logger.debug(f"- Rejected - CPU + GPU combo due to price: CPU={cpu.name} (EUR {cpu_price:.2f}), GPU={gpu.name} (EUR {gpu_price:.2f})")
                 continue
-            current = gpu_models.get(g.model)
-            if not current or get_min_price(g) < get_min_price(current):
-                gpu_models[g.model] = g
 
-        unique_gpus = list(gpu_models.values())
-        raw_cpus = CPU.objects.exclude(cpu_mark__isnull=True)
+            synergy_score = predict_cpu_gpu_synergy(synergy_label, cpu, gpu, use_case)
+            logger.debug(f"- Synergy Check - CPU={cpu.name}, GPU={gpu.name}, Score={synergy_score:.3f}")
+            if synergy_score >= synergy_threshold:
+                combos.append((cpu, gpu, synergy_score))
+                if len(combos) >= max_combos:
+                    logger.info(f"Reached maximum of {max_combos} synergy matches. Skipping further evaluation.")
+                    early_exit = True
+                    break
+        if early_exit:
+            break
 
-        # (Step 2): Evaluating synergy using recommender models for every CPU & GPU pair, storing combos.
-        synergy_threshold = 0.9
-        combos = []
-        for gpu in unique_gpus:
-            for cpu in raw_cpus:
-                gpu_price = get_min_price(gpu)
-                cpu_price = get_min_price(cpu)
-                if gpu_price + cpu_price > numeric_budget * 0.7:
-                    logger.debug(f"- Rejected - CPU + GPU combo due to price: CPU={cpu.name} (EUR {cpu_price:.2f}), GPU={gpu.name} (EUR {gpu_price:.2f})")
-                    continue
-                if not price_ok(cpu) or not price_ok(gpu):
-                    continue
+    if not combos:
+        logger.warning("No CPU/GPU synergy combos found by model.")
+        return HttpResponse("No synergy combos found for these requirements.", status=404)
 
-                synergy_score = predict_cpu_gpu_synergy(synergy_label, cpu, gpu, use_case)
-                logger.debug(f"- Synergy Check - CPU={cpu.name}, GPU={gpu.name}, Score={synergy_score:.3f}")
-                if synergy_score >= synergy_threshold:
-                    combos.append((cpu, gpu, synergy_score))
+    combos.sort(key=lambda x: get_min_price(x[0]) + get_min_price(x[1]), reverse=True)
+    logger.info(f"- Found: {len(combos)} synergy combos. Trying them in descending price order.")
 
-        if not combos:
-            logger.warning("No CPU/GPU synergy combos found by model.")
-            return HttpResponse("No synergy combos found for these requirements.", status=404)
+    first_cpu, first_gpu, _ = combos[0]
+    try:
+        components, partial_build, recovery_candidates, resolution_is_high = build_components_from_synergy(
+            first_cpu, first_gpu, synergy_label, numeric_budget, use_case, resolution
+        )
+    except Exception as e:
+        logger.exception(f"[Smart Builder] Exception during initial build for Synergy Combo 0 (CPU={first_cpu.name}, GPU={first_gpu.name}) -> {e}")
+        components = None
 
-        combos.sort(key=lambda x: x[2], reverse=True)
-        logger.info(f"- Found: {len(combos)} synergy combos. Trying them in descending synergy order.")
-
-        for (candidate_cpu, candidate_gpu_repr, synergy_val) in combos:
-            logger.debug(
-                f"- Trying Synergy - CPU ={candidate_cpu.name} (EUR{get_min_price(candidate_cpu):.2f}), "
-                f"- GPU ={candidate_gpu_repr.name} (EUR{get_min_price(candidate_gpu_repr):.2f}), "
-                f"- Synergy ={synergy_val:.3f}"
+    if components is None:
+        logger.warning(f"[Smart Builder] Initial build failed for Synergy Combo 0 (CPU={first_cpu.name}, GPU={first_gpu.name}) — missing components.")
+        components, total_price, success = budget_recovery(
+            lambda cpu, gpu: build_components_from_synergy(cpu, gpu, synergy_label, numeric_budget, use_case, resolution),
+            numeric_budget,
+            None,
+            None,
+            use_case,
+            False,
+            synergy_combos=combos
+        )
+    else:
+        total_price = sum(get_min_price(c) for c in components)
+        if total_price > numeric_budget:
+            logger.debug("- Initial Build - over budget:")
+            for c in components:
+                logger.debug(f"  - {type(c).__name__}: {c.name} (EUR{get_min_price(c):.2f})")
+            components, total_price, success = budget_recovery(
+                lambda cpu, gpu: build_components_from_synergy(cpu, gpu, synergy_label, numeric_budget, use_case, resolution),
+                numeric_budget,
+                partial_build,
+                recovery_candidates,
+                use_case,
+                resolution_is_high,
+                synergy_combos=combos
             )
+        else:
+            success = True
 
-            same_model_gpus = GPU.objects.filter(model=candidate_gpu_repr.model)
-            cheapest_subbrand_gpu = None
-            cheapest_price = 999999
-            for g in same_model_gpus:
-                mp = get_min_price(g)
-                if mp < cheapest_price:
-                    cheapest_price = mp
-                    cheapest_subbrand_gpu = g
+    if success:
+        logger.info(f"- SUCCESS - Final build total: EUR{total_price:.2f}")
+        for c in components:
+            logger.debug(f"  - {type(c).__name__}: {c.name} (EUR{get_min_price(c):.2f})")
+        new_build = PCBuild.objects.create(
+            id=generate_short_id(),
+            name="Smart Build",
+            cpu=components[0],
+            gpu=components[1],
+            motherboard=components[2],
+            ram=components[3],
+            storage=components[4],
+            psu=components[5],
+            case=components[6],
+            cooler=components[7]
+        )
+        request.session["current_build"] = str(new_build.id)
+        logger.info(f"- BUILD ID - {new_build.id} created successfully.")
+        return redirect(new_build.get_absolute_url())
 
-            chosen_gpu = cheapest_subbrand_gpu or candidate_gpu_repr
-            chosen_cpu = candidate_cpu
-
-            result = finish_smart_builder_flow(request, chosen_cpu, chosen_gpu, numeric_budget, use_case, resolution, casual_inputs)
-            if isinstance(result, HttpResponseRedirect):
-                return result
-
-        return HttpResponse("No valid build could be found within budget.", status=404)
-
-    return finish_smart_builder_flow(request, chosen_cpu, chosen_gpu, numeric_budget, use_case, resolution, casual_inputs)
+    return HttpResponse("No valid build could be found within budget.", status=404)

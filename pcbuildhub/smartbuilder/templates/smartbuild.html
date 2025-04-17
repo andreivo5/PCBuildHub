@@ -35,10 +35,6 @@
         <input type="hidden" name="framerate" id="input-framerate">
         <input type="hidden" name="editing_software" id="input-editing_software">
         <input type="hidden" name="dev_type" id="input-dev_type">
-        <input type="hidden" name="casual_use" id="input-casual_use">
-        <input type="hidden" name="casual_tabs" id="input-casual_tabs">
-        <input type="hidden" name="casual_storage" id="input-casual_storage">
-        <input type="hidden" name="casual_size_pref" id="input-casual_size_pref">
         <input type="hidden" name="budget" id="input-budget" value="2000">
 
         <h4>1. Select Use Case</h4>
@@ -85,33 +81,6 @@
             <div class="row my-3">
                 {% for dev in dev_types %}
                 <div class="col"><div class="card card-option text-center p-3" data-type="dev_type" role="button" tabindex="0" onclick="selectOption('dev_type', '{{ dev }}', event)">{{ dev }}</div></div>
-                {% endfor %}
-            </div>
-        </div>
-
-        <div id="section-casual" class="section">
-            <h4>Main Use</h4>
-            <div class="row my-3">
-                {% for task in casual_primary_use %}
-                <div class="col"><div class="card card-option text-center p-3" data-type="casual_use" role="button" tabindex="0" onclick="selectOption('casual_use', '{{ task }}', event)">{{ task }}</div></div>
-                {% endfor %}
-            </div>
-            <h4>Tabs / Apps at Once</h4>
-            <div class="row my-3">
-                {% for tab in casual_tabs %}
-                <div class="col"><div class="card card-option text-center p-3" data-type="casual_tabs" role="button" tabindex="0" onclick="selectOption('casual_tabs', '{{ tab }}', event)">{{ tab }}</div></div>
-                {% endfor %}
-            </div>
-            <h4>Storage Needs</h4>
-            <div class="row my-3">
-                {% for s in casual_storage %}
-                <div class="col"><div class="card card-option text-center p-3" data-type="casual_storage" role="button" tabindex="0" onclick="selectOption('casual_storage', '{{ s }}', event)">{{ s }}</div></div>
-                {% endfor %}
-            </div>
-            <h4>Size / Noise Preference</h4>
-            <div class="row my-3">
-                {% for pref in casual_size_pref %}
-                <div class="col"><div class="card card-option text-center p-3" data-type="casual_size_pref" role="button" tabindex="0" onclick="selectOption('casual_size_pref', '{{ pref }}', event)">{{ pref }}</div></div>
                 {% endfor %}
             </div>
         </div>
