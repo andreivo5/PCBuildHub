@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from components.models import CPU, GPU, Motherboard, RAM, Cooler, PSU, Storage, Case
 from builder.models import PCBuild
 from .recommender.predict import predict_cpu_gpu_synergy
@@ -85,7 +85,9 @@ def smart_builder_submit(request):
                 continue
 
             synergy_score = predict_cpu_gpu_synergy(synergy_label, cpu, gpu, use_case)
-            logger.debug(f"- Synergy Check - CPU={cpu.name}, GPU={gpu.name}, Score={synergy_score:.3f}")
+            score_str = f"{synergy_score:.3f}" if isinstance(synergy_score, (int, float)) else str(synergy_score)
+            logger.debug(f"- Synergy Check - CPU={cpu.name}, GPU={gpu.name}, Score={score_str}")
+                         
             if synergy_score >= synergy_threshold:
                 combos.append((cpu, gpu, synergy_score))
                 if len(combos) >= max_combos:
@@ -97,7 +99,7 @@ def smart_builder_submit(request):
 
     if not combos:
         logger.warning("No CPU/GPU synergy combos found by model.")
-        return HttpResponse("No synergy combos found for these requirements.", status=404)
+        return JsonResponse({"error": "No valid build could be found within budget."}, status=404)
 
     combos.sort(key=lambda x: get_min_price(x[0]) + get_min_price(x[1]), reverse=True)
     logger.info(f"- Found: {len(combos)} synergy combos. Trying them in descending price order.")
@@ -169,4 +171,4 @@ def smart_builder_submit(request):
         logger.info(f"- BUILD ID - {new_build.id} created successfully.")
         return redirect(new_build.get_absolute_url())
 
-    return HttpResponse("No valid build could be found within budget.", status=404)
+    return JsonResponse({"error": "No valid build could be found within budget."}, status=404)

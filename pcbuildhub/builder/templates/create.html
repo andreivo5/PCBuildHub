@@ -14,9 +14,11 @@
     --shadow: 0 3px 6px rgba(0,0,0,0.3);
     --shadow-hover: 0 6px 15px rgba(0,0,0,0.4);
   }
-
-  /* Container & Typography */
-  .container { color: #eee; }
+  
+  /* General */
+  .container {
+    color: #eee;
+  }
   .text-center.mt-4 {
     margin: 2rem 0 1.5rem;
   }
@@ -29,24 +31,34 @@
     opacity: 0;
     animation: fadeIn 0.6s ease-in-out 0.2s forwards;
   }
-
+  
+  /* Component Table */
   .table > :not(caption) > * > * {
     background-color: var(--dark-indigo) !important;
-    border-color: var(--light-indigo)  !important;
+    border-color: var(--light-indigo) !important;
   }
   .table thead th {
     background-color: var(--dark-indigo) !important;
-    color: var(--white)             !important;
+    color: var(--white) !important;
     border-bottom: 2px solid var(--light-indigo) !important;
   }
   .table tbody td {
     color: var(--light-gray) !important;
   }
-  .rename-form {
-    position: relative;
-    display: inline-block;
+  .table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
-  .build-name-input {
+  
+  /* Build Rename */
+  .rename-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+  .rename-form .build-name-input {
     background: transparent;
     border: none;
     border-bottom: 2px solid var(--white);
@@ -55,22 +67,14 @@
     font-weight: bold;
     text-align: center;
     width: 100%;
-    max-width: 600px;
-    margin: 0 auto 1rem;
+    max-width: 500px;
   }
-  .build-name-input:focus {
+  .rename-form .build-name-input:focus {
     outline: none;
     border-bottom-color: #bbc2ff;
   }
-  .rename-form .build-name-input {
-    width: 500px;
-  }
-  .rename-form .btn-rename {
-    position: absolute;
-    top: 50%;
-    right: -150px;
-    transform: translateY(-50%);
-  }
+  
+  /* Buttons */
   .btn-play,
   .btn-secondary,
   .btn-save {
@@ -110,6 +114,50 @@
     transform: translateY(-2px);
     box-shadow: 0 6px 15px rgba(0,0,0,0.4);
   }
+  
+  /* Mobile Component Card */
+  .component-card {
+    background: linear-gradient(135deg, var(--dark-indigo), var(--light-indigo));
+    border: 1px solid var(--light-indigo);
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    padding: 1rem;
+    color: var(--white);
+  }
+  .component-card a.btn {
+    margin-top: 0.5rem;
+  }
+  
+  @media (max-width: 768px) {
+    .rename-form .build-name-input {
+      font-size: 2rem;
+    }
+  
+    .btn-play,
+    .btn-secondary,
+    .btn-save {
+      width: 100%;
+      max-width: 400px;
+    }
+  } 
+
+  #copy-status {
+    display: none;
+    color: #00ff88 !important;
+    font-weight: 600;
+    animation: fadePop 0.4s ease-in-out;
+  }
+
+  @keyframes fadePop {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
 </style>
 {% endblock %}
 
@@ -128,18 +176,15 @@
         placeholder="Untitled Build"
         autofocus
       >
-      <button type="submit"
-              class="btn btn-secondary btn-sm btn-rename">
-        Rename
-      </button>
     </form>
   
     <p class="mt-2">
-      <strong>Shareable Link:</strong>
-      <a href="{{ request.build_absolute_uri }}" class="text-info">
+      <strong>Copy Shareable Link:</strong>
+      <a href="#" id="copy-link" class="text-info text-decoration-underline">
         {{ request.build_absolute_uri }}
       </a>
-    </p>
+      <span id="copy-status" class="text-success ms-2" style="display:none;">Copied!</span>
+    </p>    
   </div>
   
   {% if total_power_draw %}
@@ -171,7 +216,37 @@
   {% endif %}
 
   <h3 class="mt-5 text-white">Selected Components</h3>
-  <div class="table-responsive">
+  <!-- Mobile -->
+  <div class="d-block d-md-none">
+    <div class="d-flex align-items-center mb-3">
+      <strong class="me-2">Performance</strong>
+      <span tabindex="0"
+            data-bs-toggle="popover"
+            data-bs-trigger="focus"
+            data-bs-placement="top"
+            title="PassMark Scores"
+            data-bs-content="These scores are based on CPU and GPU benchmarks from PassMark. Higher scores indicate better performance for processing and gaming workloads.">
+        <i class="bi bi-info-circle-fill text-info" style="cursor: pointer;"></i>
+      </span>
+    </div>
+  
+    {% include 'partials/component_card.html' with label='CPU' type='cpu' component=build.cpu link=cpu_link build=build %}
+    {% include 'partials/component_card.html' with label='GPU' type='gpu' component=build.gpu link=gpu_link build=build %}
+    {% include 'partials/component_card.html' with label='Motherboard' type='motherboard' component=build.motherboard link=motherboard_link build=build %}
+    {% include 'partials/component_card.html' with label='RAM' type='ram' component=build.ram link=ram_link build=build %}
+    {% include 'partials/component_card.html' with label='Storage' type='storage' component=build.storage link=storage_link build=build %}
+    {% include 'partials/component_card.html' with label='Case' type='case' component=build.case link=case_link build=build %}
+    {% include 'partials/component_card.html' with label='Power Supply' type='psu' component=build.psu link=psu_link build=build %}
+    {% include 'partials/component_card.html' with label='Cooler' type='cooler' component=build.cooler link=cooler_link build=build %}
+  
+    <div class="component-card fw-bold d-flex justify-content-between mt-4">
+      <span>Estimated Total</span>
+      <span>€{{ total_price|floatformat:2 }}</span>
+    </div>
+  </div>
+  
+  <!-- Desktop -->
+  <div class="d-none d-md-block table-responsive">
     <table class="table align-middle text-center">
       <thead>
         <tr>
@@ -238,6 +313,20 @@
     popoverTriggerList.forEach(function (el) {
       new bootstrap.Popover(el)
     })
+  });
+
+  document.addEventListener('DOMContentLoaded', function () {
+    const link = document.getElementById('copy-link');
+    const status = document.getElementById('copy-status');
+    const url = link.textContent.trim();
+
+    link.addEventListener('click', function (e) {
+      e.preventDefault();
+      navigator.clipboard.writeText(url).then(() => {
+        status.style.display = 'inline';
+        setTimeout(() => status.style.display = 'none', 1500);
+      });
+    });
   });
 </script>
 {% endblock %}

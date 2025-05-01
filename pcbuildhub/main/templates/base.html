@@ -10,36 +10,33 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-..." crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
   <style>
-    body {
-      background-image: url("{% static 'images/bg.png' %}");
-      background-size: cover;
-      background-position: center;
-      position: relative;
-      min-height: 100vh;
+    html, body {
+      height: 100%;
       margin: 0;
       padding: 0;
     }
-    .blur-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      backdrop-filter: blur(6px);
-      background-color: rgba(0, 0, 0, 0.4);
-      z-index: 0;
-    }
-    .main-container {
-      position: relative;
-      z-index: 1;
+    
+    body {
       display: flex;
       flex-direction: column;
-      min-height: 100vh;
+      background-image: url("{% static 'images/blur_bg.png' %}");
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+    }
+    
+    .main-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      z-index: 1;
     }
 
     .navbar {
       background-color: #0d0f2d;
     }
+    
     .navbar-brand,
     .navbar-nav .nav-link {
       color: #fff;
@@ -47,7 +44,9 @@
       letter-spacing: 0.02em;
       text-transform: none;
       transition: color 0.2s ease;
+      padding-left: 1.2rem;
     }
+    
     .navbar-nav .nav-link:hover {
       color: #bbc2ff !important;
     }
@@ -55,6 +54,7 @@
     footer {
       background-color: #0d0f2d;
       color: #ccc;
+      margin-bottom: 0 !important;
     }
 
     #confirmNewBuildModal .modal-content {
@@ -103,7 +103,23 @@
     #confirmNewBuildModal .modal-dialog {
       z-index: 1101 !important;
     }
-  
+
+    #loadingModal {
+      z-index: 1100 !important;
+    }
+    #loadingModal .modal-dialog {
+      z-index: 1101 !important;
+    }
+    #loadingModal .modal-content {
+      background: linear-gradient(135deg, #0d0f2d 0%, #1a1f71 100%);
+      border: none;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+      color: #fff;
+    }
+    #loadingModal .modal-body h5 {
+      color: #fff;
+    }
     .modal-backdrop.show {
       z-index: 1050 !important;
     }
@@ -111,11 +127,8 @@
 
   {% block extra_css %}{% endblock %}
 </head>
-<body>
- 
-  <div class="blur-overlay"></div>
+<body> 
   <div class="main-container">
-
     <nav class="navbar navbar-expand-lg navbar-dark">
       <div class="container-fluid px-0">
         <a class="navbar-brand ms-3" href="{% url 'home' %}">
@@ -153,10 +166,10 @@
                 <a class="nav-link" href="{% url 'create_build' %}">Continue Build</a>
               </li>
               <li class="nav-item">
-                <button class="nav-link btn btn-link py-2 px-3" data-bs-toggle="modal" data-bs-target="#confirmNewBuildModal" style="color: #fff;">
+                <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#confirmNewBuildModal">
                   New Build
-                </button>
-              </li>
+                </a>
+              </li>              
             {% else %}
               <li class="nav-item">
                 <a class="nav-link" href="{% url 'create_build' %}">New Build</a>
@@ -192,6 +205,20 @@
         <div class="modal-footer border-0">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
           <a href="{% url 'new_build' %}" class="btn btn-danger">Yes, Start New</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Smartbuilder Modal -->
+  <div class="modal fade" id="loadingModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content" id="loadingModalContent">
+        <div class="modal-body text-center py-4" id="loadingModalBody">
+          <h5>Building your requested PC...</h5>
+          <div class="progress mt-3" style="height: 20px;">
+            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 100%"></div>
+          </div>
         </div>
       </div>
     </div>

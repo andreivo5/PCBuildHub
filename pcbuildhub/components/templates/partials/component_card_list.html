@@ -1,0 +1,144 @@
+<div class="component-card mb-3 p-3 rounded text-white bg-dark shadow-sm">
+    <div class="mt-2 d-flex align-items-center">
+      <img src="{{ component.image }}"
+           style="width:60px; height:60px; object-fit:contain; margin-right:10px;"
+           onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg';">
+      <a href="{% if build %}{% url 'component_detail_with_build' component_name|lower component.id build.id %}{% else %}{% url 'component_detail' component_name|lower component.id %}{% endif %}"
+         class="text-decoration-none text-white fw-semibold fs-6">
+        {{ component.name }}
+      </a>
+    </div>
+  
+    <div class="mt-3 small">
+      {% if component_name == "Gpu" %}
+        <div><strong>Model</strong>
+          <i class="bi bi-info-circle-fill text-info ms-1" tabindex="0" data-bs-toggle="popover" data-bs-trigger="manual" data-bs-placement="top" title="GPU Model"
+             data-bs-content="The specific variant of the graphics card, useful when comparing similar cards."></i>
+          : {{ component.model }}
+        </div>
+        <div><strong>VRAM</strong>
+          <i class="bi bi-info-circle-fill text-info ms-1" tabindex="0" data-bs-toggle="popover" data-bs-trigger="manual" data-bs-placement="top" title="Video Memory (VRAM)"
+             data-bs-content="The amount of memory on the GPU. Higher VRAM helps with high-res textures and gaming at 1440p or 4K."></i>
+          : {{ component.vram }} GB
+        </div>
+        <div><strong>TDP</strong>
+          <i class="bi bi-info-circle-fill text-info ms-1" tabindex="0" data-bs-toggle="popover" data-bs-trigger="manual" data-bs-placement="top" title="Thermal Design Power"
+             data-bs-content="The power consumption under load. Important when choosing a PSU."></i>
+          : {{ component.tdp }} W
+        </div>
+        <div><strong>G3D Mark</strong>
+          <i class="bi bi-info-circle-fill text-info ms-1" tabindex="0" data-bs-toggle="popover" data-bs-trigger="manual" data-bs-placement="top" title="PassMark G3D Mark"
+             data-bs-content="A benchmark score from PassMark for gaming and 3D performance. Higher is better."></i>
+          : {{ component.g3d_mark }}
+        </div>
+  
+      {% elif component_name == "Cpu" %}
+        <div><strong>Core Count</strong>
+          <i class="bi bi-info-circle-fill text-info ms-1" tabindex="0" data-bs-toggle="popover" data-bs-trigger="manual" data-bs-placement="top" title="CPU Cores"
+             data-bs-content="The number of physical cores in the CPU. More cores help with multitasking and workloads like editing."></i>
+          : {{ component.core_count }}
+        </div>
+        <div><strong>Speed</strong>
+          <i class="bi bi-info-circle-fill text-info ms-1" tabindex="0" data-bs-toggle="popover" data-bs-trigger="manual" data-bs-placement="top" title="Base Clock Speed"
+             data-bs-content="Measured in GHz, it shows how fast each core runs. Higher speeds help with general responsiveness."></i>
+          : {{ component.core_clock }} GHz
+        </div>
+        <div><strong>Socket</strong>
+          <i class="bi bi-info-circle-fill text-info ms-1" tabindex="0" data-bs-toggle="popover" data-bs-trigger="manual" data-bs-placement="top" title="CPU Socket"
+             data-bs-content="The physical CPU connector. Must match your motherboard socket to be compatible."></i>
+          : {{ component.socket }}
+        </div>
+        <div><strong>CPU Mark</strong>
+          <i class="bi bi-info-circle-fill text-info ms-1" tabindex="0" data-bs-toggle="popover" data-bs-trigger="manual" data-bs-placement="top" title="PassMark CPU Mark"
+             data-bs-content="A benchmark score from PassMark. Good for comparing general processing power."></i>
+          : {{ component.cpu_mark }}
+        </div>
+  
+      {% elif component_name == "Motherboard" %}
+        <div><strong>Socket</strong>
+          <i class="bi bi-info-circle-fill text-info ms-1" tabindex="0" data-bs-toggle="popover" data-bs-trigger="manual" data-bs-placement="top" title="CPU Socket Type"
+             data-bs-content="The type of CPU connection it supports. Must match your CPU."></i>
+          : {{ component.socket }}
+        </div>
+        <div><strong>Size</strong>
+          <i class="bi bi-info-circle-fill text-info ms-1" tabindex="0" data-bs-toggle="popover" data-bs-trigger="manual" data-bs-placement="top" title="Form Factor"
+             data-bs-content="The physical size (ATX, MicroATX, etc). Determines case compatibility."></i>
+          : {{ component.size }}
+        </div>
+        <div><strong>RAM Type</strong>
+          <i class="bi bi-info-circle-fill text-info ms-1" tabindex="0" data-bs-toggle="popover" data-bs-trigger="manual" data-bs-placement="top" title="Memory Support"
+             data-bs-content="The type of RAM supported, such as DDR4 or DDR5. Must match your RAM."></i>
+          : {{ component.ram_type }}
+        </div>
+  
+      {% elif component_name == "Ram" %}
+        <div><strong>Type</strong>
+          <i class="bi bi-info-circle-fill text-info ms-1" tabindex="0" data-bs-toggle="popover" data-bs-trigger="manual" data-bs-placement="top" title="RAM Type"
+             data-bs-content="e.g. DDR4 or DDR5. Must match what your motherboard supports."></i>
+          : {{ component.type }}
+        </div>
+        <div><strong>Size</strong>
+          <i class="bi bi-info-circle-fill text-info ms-1" tabindex="0" data-bs-toggle="popover" data-bs-trigger="manual" data-bs-placement="top" title="RAM Size"
+             data-bs-content="Total memory capacity in GB. More RAM helps with multitasking and larger applications."></i>
+          : {{ component.size }} GB
+        </div>
+  
+      {% elif component_name == "Storage" %}
+        <div><strong>Size</strong>
+          <i class="bi bi-info-circle-fill text-info ms-1" tabindex="0" data-bs-toggle="popover" data-bs-trigger="manual" data-bs-placement="top" title="Storage Capacity"
+             data-bs-content="Amount of available space, measured in GB or TB. Choose based on your needs for games and files."></i>
+          : {{ component.space }} GB
+        </div>
+        <div><strong>Type</strong>
+          <i class="bi bi-info-circle-fill text-info ms-1" tabindex="0" data-bs-toggle="popover" data-bs-trigger="manual" data-bs-placement="top" title="Drive Type"
+             data-bs-content="e.g. NVMe, SATA SSD, or HDD. NVMe is fastest, HDD is slowest."></i>
+          : {{ component.type }}
+        </div>
+  
+      {% elif component_name == "Psu" %}
+        <div><strong>Size</strong>
+          <i class="bi bi-info-circle-fill text-info ms-1" tabindex="0" data-bs-toggle="popover" data-bs-trigger="manual" data-bs-placement="top" title="Form Factor"
+             data-bs-content="Usually ATX. Must fit your PC case."></i>
+          : {{ component.size }}
+        </div>
+        <div><strong>Power</strong>
+          <i class="bi bi-info-circle-fill text-info ms-1" tabindex="0" data-bs-toggle="popover" data-bs-trigger="manual" data-bs-placement="top" title="Wattage"
+             data-bs-content="The total power output. Should be higher than your PC's total power draw."></i>
+          : {{ component.power }} W
+        </div>
+  
+      {% elif component_name == "Case" %}
+        <div><strong>Size</strong>
+          <i class="bi bi-info-circle-fill text-info ms-1" tabindex="0" data-bs-toggle="popover" data-bs-trigger="manual" data-bs-placement="top" title="Case Form Factor"
+             data-bs-content="Determines what motherboard sizes and PSU types it supports."></i>
+          : {{ component.size }}
+        </div>
+  
+      {% elif component_name == "Cooler" %}
+        <div><strong>Type</strong>
+          <i class="bi bi-info-circle-fill text-info ms-1" tabindex="0" data-bs-toggle="popover" data-bs-trigger="manual" data-bs-placement="top" title="Cooler Type"
+             data-bs-content="Air or liquid cooling. Liquid is quieter and more efficient, but costlier."></i>
+          : {{ component.type }}
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="mt-3 d-flex justify-content-between align-items-center rounded px-3 py-2"
+        style="background: none">
+    <span class="fw-bold text-white me-3">
+        Price:
+        {% if component.min_price %}
+        €{{ component.min_price|floatformat:2 }}
+        {% else %}
+        N/A
+        {% endif %}
+    </span>
+
+    {% if build %}
+        <a href="{% url 'select_component' component_name|lower build.id component.id %}"
+        class="btn btn-back btn-sm">
+        Select
+        </a>
+    {% endif %}
+    </div>
+  </div>  

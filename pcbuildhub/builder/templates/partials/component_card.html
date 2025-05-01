@@ -1,0 +1,57 @@
+<div class="component-card mb-3">
+    <div class="d-flex justify-content-between align-items-center">
+      <strong>{{ label }}</strong>
+      <span>
+        {% if component and component.min_price %}
+          €{{ component.min_price|floatformat:2 }}
+        {% else %}
+          N/A
+        {% endif %}
+      </span>
+    </div>
+  
+    {% if component %}
+      <div class="mt-2 d-flex align-items-center">
+        <img
+          src="{{ component.image }}"
+          class="img-thumbnail me-2"
+          style="width: 50px; height: 50px; object-fit: contain;"
+          onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg';"
+        >
+        <a
+          href="{% url 'component_detail_with_build' type component.id build.id %}"
+          class="text-decoration-none text-white"
+        >
+          {{ component.name }}
+        </a>
+      </div>
+  
+      {% if type == 'cpu' and component.cpu_mark %}
+        <div class="mt-2">CPU Mark: {{ component.cpu_mark }}</div>
+      {% elif type == 'gpu' and component.g3d_mark %}
+        <div class="mt-2">G3D Mark: {{ component.g3d_mark }}</div>
+      {% endif %}
+  
+    {% else %}
+      <div class="mt-2 text-secondary">Not Selected</div>
+    {% endif %}
+  
+    <div class="mt-3 d-flex flex-wrap gap-2">
+      <a
+        href="{% url 'component_with_build' type build.id %}"
+        class="btn btn-primary btn-sm"
+      >
+        {% if component %}Change{% else %}Add{% endif %}
+      </a>
+  
+      {% if component and link %}
+        <a
+          href="{{ link }}"
+          target="_blank"
+          class="btn btn-primary btn-sm"
+        >
+          Buy
+        </a>
+      {% endif %}
+    </div>
+  </div>  

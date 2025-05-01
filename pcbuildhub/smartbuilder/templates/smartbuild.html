@@ -49,26 +49,10 @@
     font-weight: 600;
     text-align: center;
   }
-  #loadingModal .modal-content {
-    background: linear-gradient(135deg, #0d0f2d 0%, #1a1f71 100%);
-    border: none;
-  }
-  #loadingModal .modal-body h5 {
-    color: #fff;
-  }
 
-  #loadingModal {
-    position: fixed !important;
-    z-index: 1100 !important;
-  }
-  .modal-backdrop.show {
-    z-index: 1050 !important;
-  }
-  #loadingModal .modal-dialog {
-    z-index: 1101 !important;
-  }
-    to { background-position: -1rem 0; }
-}
+  .stage {
+    min-height: 100px;
+  }  
 </style>
 {% endblock %}
 
@@ -212,22 +196,6 @@
   </form>
 </div>
 
-<!-- Loading Modal -->
-<div class="modal fade" id="loadingModal" tabindex="-1" aria-hidden="true" data-backdrop="static" data-keyboard="false">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content bg-dark text-white border-0">
-      <div class="modal-body text-center py-4">
-        <h5>Building your requested PC...</h5>
-        <div class="progress mt-3" style="height: 20px;">
-          <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 100%"></div>
-        </div>
-        </div>
-      </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
 {% endblock %}
 
 {% block extra_js %}
@@ -239,8 +207,17 @@
       new bootstrap.Popover(el);
     });
   });
-  function reveal(id) { document.getElementById(id)?.classList.add('visible'); }
 
+  // Option / Stage handler
+  function reveal(id) {
+    const el = document.getElementById(id);
+    if (el) {
+      el.classList.add('visible');
+      setTimeout(() => {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 100);
+    }
+  }  
   document.addEventListener('click', e => {
     const btn = e.target.closest('.btn-option'); if(!btn) return;
     const type = btn.dataset.type, val = btn.dataset.value;
@@ -297,9 +274,45 @@
     }
   });
 
-  document.getElementById('smart-form').addEventListener('submit', function(e) {
-    var loadingModal = new bootstrap.Modal(document.getElementById('loadingModal'));
+  // Modal
+  document.getElementById('smart-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const loadingModal = new bootstrap.Modal(document.getElementById('loadingModal'), {
+      backdrop: 'static',
+      keyboard: false
+    });
+    const modalBody = document.getElementById('loadingModalBody');
     loadingModal.show();
+
+    const formData = new FormData(this);
+
+    try {
+      const response = await fetch("{% url 'smart_builder_submit' %}", {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+        },
+        body: formData
+      });
+
+      if (response.ok) {
+        window.location.href = response.url;
+      } else {
+        const data = await response.json();
+        modalBody.innerHTML = `
+          <h5 class="text-danger">${data.error}</h5>
+          <p class="mt-3">Try adjusting your budget or preferences and try again.</p>
+          <button class="btn-option" data-bs-dismiss="modal">Back to Smart Builder</button>
+        `;
+      }
+    } catch (err) {
+      modalBody.innerHTML = `
+        <h5 class="text-danger">Unexpected error</h5>
+        <p class="mt-3">Something went wrong. Please try again shortly.</p>
+        <button class="btn-option" data-bs-dismiss="modal">Back</button>
+      `;
+    }
   });
 </script>
 {% endblock %}

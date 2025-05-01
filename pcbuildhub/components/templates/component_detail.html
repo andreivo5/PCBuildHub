@@ -61,6 +61,12 @@
       display: inline-block;
       margin: 0 auto;
     }
+    .component-type {
+      color: #fff;
+      font-size: 1.1rem;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+    }    
   </style>  
 {% endblock %}
 
@@ -69,7 +75,7 @@
 
   <!-- Header -->
   <div class="mb-4 text-center">
-    <h5 class="text-secondary">{{ display_name }}</h5>
+    <h5 class="component-type">{{ display_name }}</h5>
     <h1 class="mb-2">{{ component.name }}</h1>
   </div>
 
@@ -79,7 +85,7 @@
       <img src="{{ component.image }}"
            alt="{{ component.name }}"
            class="img-fluid rounded shadow-sm"
-           onerror="this.onerror=null;this.src='https://via.placeholder.com/300';">
+           onerror="this.onerror=null;this.src='https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg';">
     </div>
 
     <!-- Specs & Add Button -->

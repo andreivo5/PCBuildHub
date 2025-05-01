@@ -31,6 +31,11 @@
     animation-delay: 0.5s;
   }
 
+  .logo-img {
+    max-width: 100%;
+    height: auto;
+  }  
+
   .d-grid a,
   .d-grid button {
     opacity: 0;
@@ -100,8 +105,8 @@
 <div class="container-fluid p-0">
   <div class="home-container">
     <h1>
-      <img src="{% static 'images/logoname.png' %}" alt="PCBuildHub" height="80">
-    </h1>
+      <img src="{% static 'images/logoname.png' %}" alt="PCBuildHub" class="logo-img">
+    </h1>    
     <div class="d-grid gap-4" style="width:100%;">
       {% if request.session.current_build %}
         <a href="{% url 'create_build' %}" class="btn btn-custom">Continue Build</a>
