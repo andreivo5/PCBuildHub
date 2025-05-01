@@ -31,13 +31,15 @@
     animation-delay: 0.5s;
   }
 
-  .d-grid a {
+  .d-grid a,
+  .d-grid button {
     opacity: 0;
     animation: fadeIn 0.5s forwards;
   }
-  .d-grid a:nth-child(1) { animation-delay: 0.7s; }
-  .d-grid a:nth-child(2) { animation-delay: 0.9s; }
-  .d-grid a:nth-child(3) { animation-delay: 1.1s; }
+  .d-grid :nth-child(1) { animation-delay: 0.7s; }
+  .d-grid :nth-child(2) { animation-delay: 0.9s; }
+  .d-grid :nth-child(3) { animation-delay: 1.1s; }
+  .d-grid :nth-child(4) { animation-delay: 1.3s; }
 
   .btn-custom {
     display: inline-block;
@@ -63,20 +65,60 @@
     transform: translateY(-3px);
     box-shadow: 0 6px 15px rgba(0,0,0,0.4);
   }
+
+  .modal-backdrop.show {
+    z-index: 1050;
+  }
+
+  .modal {
+    z-index: 1060;
+  }
+
+  .modal-dialog {
+    z-index: 1061;
+  }
+
+  .blur-overlay {
+    z-index: 0 !important;
+  }
+  #confirmNewBuildModal .modal-content {
+    background: linear-gradient(135deg, #0d0f2d 0%, #1a1f71 100%);
+    border: none;
+    color: #fff;
+  }
+  #confirmNewBuildModal .modal-header,
+  #confirmNewBuildModal .modal-footer {
+    border: none;
+  }
+  #confirmNewBuildModal .btn-close {
+    filter: invert(1);
+  }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="container-fluid p-0">
   <div class="home-container">
-    <h1>PCBuildHub</h1>
+    <h1>
+      <img src="{% static 'images/logoname.png' %}" alt="PCBuildHub" height="80">
+    </h1>
     <div class="d-grid gap-4" style="width:100%;">
-      <a href="{% url 'create_build' %}" class="btn btn-custom">New Build</a>
+      {% if request.session.current_build %}
+        <a href="{% url 'create_build' %}" class="btn btn-custom">Continue Build</a>
+        <button class="btn btn-custom" data-bs-toggle="modal" data-bs-target="#confirmNewBuildModal">
+          New Build
+        </button>
+      {% else %}
+        <a href="{% url 'create_build' %}" class="btn btn-custom">New Build</a>
+      {% endif %}
       <a href="{% url 'smart_builder' %}" class="btn btn-custom">Smart Build</a>
       <a href="{% url 'components' %}" class="btn btn-custom">View Components</a>
     </div>
   </div>
 </div>
+
 {% endblock %}
+
+
 
 {% block extra_js %}{% endblock %}

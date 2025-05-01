@@ -8,6 +8,7 @@
 
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-..." crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
   <style>
     body {
       background-image: url("{% static 'images/bg.png' %}");
@@ -55,6 +56,57 @@
       background-color: #0d0f2d;
       color: #ccc;
     }
+
+    #confirmNewBuildModal .modal-content {
+      background: linear-gradient(135deg, #0d0f2d 0%, #1a1f71 100%);
+      border: none;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    }
+  
+    #confirmNewBuildModal .modal-header,
+    #confirmNewBuildModal .modal-footer {
+      border: none;
+    }
+  
+    #confirmNewBuildModal .modal-title {
+      color: #fff;
+      font-weight: 600;
+    }
+  
+    #confirmNewBuildModal .modal-body {
+      color: #ccc;
+      font-size: 1rem;
+    }
+  
+    #confirmNewBuildModal .btn {
+      border-radius: 6px;
+      padding: 0.5rem 1.2rem;
+    }
+  
+    #confirmNewBuildModal .btn-danger {
+      background: linear-gradient(135deg, #8b0000, #d12d2d);
+      border: none;
+    }
+  
+    #confirmNewBuildModal .btn-secondary {
+      background: linear-gradient(135deg, #333, #555);
+      border: none;
+      color: #eee;
+    }
+  
+    #confirmNewBuildModal {
+      position: fixed !important;
+      z-index: 1100 !important;
+    }
+  
+    #confirmNewBuildModal .modal-dialog {
+      z-index: 1101 !important;
+    }
+  
+    .modal-backdrop.show {
+      z-index: 1050 !important;
+    }
   </style>
 
   {% block extra_css %}{% endblock %}
@@ -66,7 +118,9 @@
 
     <nav class="navbar navbar-expand-lg navbar-dark">
       <div class="container-fluid px-0">
-        <a class="navbar-brand ms-3" href="{% url 'home' %}">PCBuildHub</a>
+        <a class="navbar-brand ms-3" href="{% url 'home' %}">
+          <img src="{% static 'images/logoname.png' %}" alt="PCBuildHub" height="30">
+        </a>
         <button class="navbar-toggler me-3" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -94,9 +148,20 @@
                 <a class="nav-link" href="{% url 'login:signup' %}">Sign Up</a>
               </li>
             {% endif %}
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'create_build' %}">New Build</a>
-            </li>
+            {% if request.session.current_build %}
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'create_build' %}">Continue Build</a>
+              </li>
+              <li class="nav-item">
+                <button class="nav-link btn btn-link py-2 px-3" data-bs-toggle="modal" data-bs-target="#confirmNewBuildModal" style="color: #fff;">
+                  New Build
+                </button>
+              </li>
+            {% else %}
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'create_build' %}">New Build</a>
+              </li>
+            {% endif %}
             <li class="nav-item">
               <a class="nav-link" href="{% url 'smart_builder' %}">Smart Build</a>
             </li>
@@ -112,7 +177,24 @@
     <footer class="text-center py-3 mt-auto">
       &copy; 2025 PCBuildHub. All rights reserved.
     </footer>
-
+  </div>
+  <!-- Confirm New Build Modal -->
+  <div class="modal fade" id="confirmNewBuildModal" tabindex="-1" aria-labelledby="confirmNewBuildLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content bg-dark text-white border-0">
+        <div class="modal-header border-0">
+          <h5 class="modal-title" id="confirmNewBuildLabel">Start New Build?</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          This will discard your current build and start a new one. Are you sure?
+        </div>
+        <div class="modal-footer border-0">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <a href="{% url 'new_build' %}" class="btn btn-danger">Yes, Start New</a>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- Bootstrap JS -->

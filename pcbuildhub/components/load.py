@@ -68,7 +68,6 @@ def import_gpu_data():
                 brand=row['brand'],
                 model=row['model'],
                 vram=int(row['VRAM']),
-                resolution=row.get('resolution'),
                 g3d_mark=float(row['g3d_mark']) if row['g3d_mark'] else None,
                 g2d_mark=float(row['g2d_mark']) if row['g2d_mark'] else None,
                 tdp=int(row['tdp']) if row['tdp'] else None,

@@ -6,12 +6,10 @@ from sklearn.metrics import classification_report, confusion_matrix
 from collections import Counter
 import os
 
-# Load editing dataset
 df = pd.read_csv("cpu_gpu_video_editing_data.csv")
 print(f"Loaded dataset with {len(df)} rows.")
 print("Labels:", df["label"].unique())
 
-# Fill missing values for safe training
 df["cpu_cores"]   = df["cpu_cores"].fillna(0)
 df["cpu_clock"]   = df["cpu_clock"].fillna(0)
 df["cpu_tdp"]     = df["cpu_tdp"].fillna(0)

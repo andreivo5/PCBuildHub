@@ -162,8 +162,34 @@ def component_detail(request, component_type, component_id, build_id=None):
     build = get_object_or_404(PCBuild, id=build_id) if build_id else None
 
     exclude_fields = ['id', 'name', 'image', 'url', 'offers']
+
+    tooltip_map = {
+        "Core Count": "Number of physical CPU cores for multitasking and workloads.",
+        "Base Clock (GHz)": "The default operating frequency of the CPU cores.",
+        "Boost Clock (GHz)": "Maximum frequency CPU cores can reach under load.",
+        "TDP (W)": "Estimated power draw under full load. Important for PSU sizing.",
+        "Integrated Graphics": "Built-in graphics chip on the CPU, used when no GPU is present.",
+        "Simultaneous Multithreading (SMT)": "If true, each core can run two threads.",
+        "PassMark CPU Mark": "Overall CPU benchmark score. Higher = faster.",
+        "PassMark Thread Mark": "Score for multi-threaded performance (e.g. rendering).",
+        "Socket": "Physical connector on the motherboard for the CPU.",
+        "Model": "Specific product number or identifier.",
+        "VRAM (GB)": "Video memory on the GPU. Higher helps at higher resolutions.",
+        "PassMark G3D Mark": "Graphics benchmark score for 3D performance.",
+        "PassMark G2D Mark": "Score for non-gaming graphics tasks like desktop rendering.",
+        "Brand": "Manufacturer or vendor.",
+        "Form Factor": "Physical size standard (e.g. ATX, MicroATX).",
+        "RAM Slots": "Number of memory slots supported on the motherboard.",
+        "RAM Type": "Type of memory supported (e.g. DDR4, DDR5).",
+        "RAM Size (GB)": "Capacity of the memory module in gigabytes.",
+        "Storage Type": "e.g. SSD, NVMe, HDD.",
+        "Capacity (GB)": "Storage space in gigabytes.",
+        "Cooler Type": "Whether it’s an air or liquid cooler.",
+        "Wattage (W)": "Total power output for a PSU.",
+    }
+
     specs = {
-        field.verbose_name.title(): getattr(component, field.name)
+        field.verbose_name: getattr(component, field.name)
         for field in model._meta.fields
         if field.name not in exclude_fields
     }
@@ -175,5 +201,6 @@ def component_detail(request, component_type, component_id, build_id=None):
         'specs': specs,
         'build': build,
         'offers': getattr(component, 'offers', []),
+        'tooltips': tooltip_map,
     })
 

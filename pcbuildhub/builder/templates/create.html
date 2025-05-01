@@ -144,7 +144,18 @@
   
   {% if total_power_draw %}
   <div class="mt-4">
-    <h5 class="text-white">Estimated Power Draw</h5>
+    <h5 class="text-white">
+      Estimated Power Draw
+      <span tabindex="0"
+            class="ms-2"
+            data-bs-toggle="popover"
+            data-bs-trigger="focus"
+            data-bs-placement="right"
+            title="What is this?"
+            data-bs-content="This is the estimated total wattage your selected components will draw. Try to keep it under 90% of your PSU's rated power to avoid instability.">
+        <i class="bi bi-info-circle-fill text-info" style="cursor: pointer;"></i>
+      </span>
+    </h5>    
     <div class="progress" style="height: 30px; border-radius: 8px; overflow: hidden; background-color: #2c3040;">
       <div class="progress-bar {% if power_status == 'danger' %}bg-danger{% elif power_status == 'warning' %}bg-warning{% else %}bg-success{% endif %}"
            role="progressbar"
@@ -166,7 +177,18 @@
         <tr>
           <th>Component</th>
           <th style="min-width: 300px;">Selection</th>
-          <th>Performance</th>
+          <th>
+            Performance
+            <span tabindex="0"
+                  class="ms-1"
+                  data-bs-toggle="popover"
+                  data-bs-trigger="focus"
+                  data-bs-placement="top"
+                  title="PassMark Scores"
+                  data-bs-content="These scores are based on CPU and GPU benchmarks from PassMark. Higher scores indicate better performance for processing and gaming workloads.">
+              <i class="bi bi-info-circle-fill text-info" style="cursor: pointer;"></i>
+            </span>
+          </th>          
           <th>Action</th>
           <th>Buy</th>
           <th>Price</th>
@@ -202,8 +224,21 @@
         </button>
       </form>
     {% endif %}
-    <a href="{% url 'new_build' %}" class="btn-play">New Build</a>
+    <button class="btn-play" data-bs-toggle="modal" data-bs-target="#confirmNewBuildModal">
+      New Build
+    </button>
     <a href="{% url 'home' %}" class="btn-secondary">Back to Home</a>
   </div>
 </div>
 {% endblock %}
+{% block extra_js %}
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
+    popoverTriggerList.forEach(function (el) {
+      new bootstrap.Popover(el)
+    })
+  });
+</script>
+{% endblock %}
+

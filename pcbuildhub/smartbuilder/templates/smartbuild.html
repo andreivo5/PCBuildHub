@@ -5,10 +5,8 @@
 
 {% block extra_css %}
 <style>
-  /* Fade-in animation */
   @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-  /* Stage containers hidden by default */
   .stage {
     display: none;
     opacity: 0;
@@ -22,7 +20,6 @@
     animation: fadeIn 0.4s ease;
   }
 
-  /* Button styling */
   .btn-option {
     display: inline-block;
     min-width: 120px;
@@ -52,7 +49,6 @@
     font-weight: 600;
     text-align: center;
   }
-  /* Modal theming */
   #loadingModal .modal-content {
     background: linear-gradient(135deg, #0d0f2d 0%, #1a1f71 100%);
     border: none;
@@ -61,7 +57,6 @@
     color: #fff;
   }
 
-  /* Ensure modal appears above page overlay */
   #loadingModal {
     position: fixed !important;
     z-index: 1100 !important;
@@ -72,10 +67,6 @@
   #loadingModal .modal-dialog {
     z-index: 1101 !important;
   }
-  
-  
-
-
     to { background-position: -1rem 0; }
 }
 </style>
@@ -95,7 +86,13 @@
 
     <!-- Stage 1: Use Case -->
     <div id="stage-use-case" class="stage visible">
-      <h4>Select Use Case</h4>
+      <h4>
+        Select Use Case
+        <span tabindex="0" data-bs-toggle="popover" data-bs-trigger="focus" title="Use Case"
+              data-bs-content="What will you mainly use this PC for? This helps tailor parts for gaming, editing, or development.">
+          <i class="bi bi-info-circle-fill text-info" style="cursor: pointer;"></i>
+        </span>
+      </h4>
       <div class="d-flex flex-wrap justify-content-center">
         {% for opt in use_cases %}
           <button type="button"
@@ -110,7 +107,13 @@
 
     <!-- Stage 2: Gaming Resolution -->
     <div id="stage-resolution-gaming" class="stage">
-      <h4>Select Resolution</h4>
+      <h4>
+        Select Resolution
+        <span tabindex="0" data-bs-toggle="popover" data-bs-trigger="focus" title="Resolution"
+              data-bs-content="The quality level for games. 1080p is Full HD, 1440p is higher detail, and 4K is ultra high definition.">
+          <i class="bi bi-info-circle-fill text-info" style="cursor: pointer;"></i>
+        </span>
+      </h4>
       <div class="d-flex flex-wrap justify-content-center">
         {% for res in gaming_resolutions %}
           <button type="button" class="btn-option" data-type="resolution" data-value="{{ res }}">{{ res }}</button>
@@ -120,7 +123,13 @@
 
     <!-- Stage 3: Gaming Framerate -->
     <div id="stage-framerate" class="stage">
-      <h4>Select Framerate</h4>
+      <h4>
+        Select Framerate
+        <span tabindex="0" data-bs-toggle="popover" data-bs-trigger="focus" title="Framerate"
+              data-bs-content="How many frames per second you want in games. Higher framerates feel smoother, especially on high refresh rate monitors.">
+          <i class="bi bi-info-circle-fill text-info" style="cursor: pointer;"></i>
+        </span>
+      </h4>      
       <div class="d-flex flex-wrap justify-content-center">
         {% for fps in gaming_framerates %}
           <button type="button" class="btn-option" data-type="framerate" data-value="{{ fps }}">{{ fps }} fps</button>
@@ -130,7 +139,13 @@
 
     <!-- Stage 2: Editing Resolution -->
     <div id="stage-resolution-editing" class="stage">
-      <h4>Select Editing Resolution</h4>
+      <h4>
+        Select Editing Resolution
+        <span tabindex="0" data-bs-toggle="popover" data-bs-trigger="focus" title="Editing Resolution"
+              data-bs-content="The resolution of videos you'll be editing. Higher resolutions like 4K need more powerful hardware.">
+          <i class="bi bi-info-circle-fill text-info" style="cursor: pointer;"></i>
+        </span>
+      </h4>
       <div class="d-flex flex-wrap justify-content-center">
         {% for res in editing_resolutions %}
           <button type="button" class="btn-option" data-type="resolution" data-value="{{ res }}">{{ res }}</button>
@@ -140,7 +155,13 @@
 
     <!-- Stage 3: Editing Software -->
     <div id="stage-editing-software" class="stage">
-      <h4>Select Editing Software</h4>
+      <h4>
+        Select Editing Software
+        <span tabindex="0" data-bs-toggle="popover" data-bs-trigger="focus" title="Software"
+              data-bs-content="Your preferred video editing program. Some use CPU more, others need strong GPU performance.">
+          <i class="bi bi-info-circle-fill text-info" style="cursor: pointer;"></i>
+        </span>
+      </h4>      
       <div class="d-flex flex-wrap justify-content-center">
         {% for sw in editing_software %}
           <button type="button" class="btn-option" data-type="editing_software" data-value="{{ sw }}">{{ sw }}</button>
@@ -150,7 +171,13 @@
 
     <!-- Stage 2: Development Type -->
     <div id="stage-dev" class="stage">
-      <h4>Select Development Type</h4>
+      <h4>
+        Select Development Type
+        <span tabindex="0" data-bs-toggle="popover" data-bs-trigger="focus" title="Development Type"
+              data-bs-content="What kind of coding you'll be doing. This helps pick parts that support compiling, debugging, or running code efficiently.">
+          <i class="bi bi-info-circle-fill text-info" style="cursor: pointer;"></i>
+        </span>
+      </h4>      
       <div class="d-flex flex-wrap justify-content-center">
         {% for d in dev_types %}
           <button type="button" class="btn-option" data-type="dev_type" data-value="{{ d }}">{{ d }}</button>
@@ -160,7 +187,13 @@
 
     <!-- Stage 3: Budget -->
     <div id="stage-budget" class="stage">
-      <h4>Select Budget</h4>
+      <h4>
+        Select Budget
+        <span tabindex="0" data-bs-toggle="popover" data-bs-trigger="focus" title="Budget"
+              data-bs-content="How much you're willing to spend. We'll suggest the best parts that fit your needs and price range.">
+          <i class="bi bi-info-circle-fill text-info" style="cursor: pointer;"></i>
+        </span>
+      </h4>      
       {% for case, budgets in budgets_by_use_case.items %}
         <div id="budget-{{ case|lower }}" class="budget-group" style="display:none;">
           <div class="d-flex flex-wrap justify-content-center">
@@ -199,13 +232,20 @@
 
 {% block extra_js %}
 <script>
+  // Bootstrap tooltip popovers
+  document.addEventListener('DOMContentLoaded', function () {
+    const popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+    popoverTriggerList.forEach(function (el) {
+      new bootstrap.Popover(el);
+    });
+  });
   function reveal(id) { document.getElementById(id)?.classList.add('visible'); }
 
   document.addEventListener('click', e => {
     const btn = e.target.closest('.btn-option'); if(!btn) return;
     const type = btn.dataset.type, val = btn.dataset.value;
 
-    // Reset on use-case select
+    // Use Case
     if(type === 'use-case'){
       document.querySelectorAll('.stage').forEach(s=>s.classList.remove('visible'));
       document.querySelectorAll('.btn-option').forEach(b=>b.classList.remove('active'));
@@ -257,7 +297,6 @@
     }
   });
 
-  // Show loading modal on form submit
   document.getElementById('smart-form').addEventListener('submit', function(e) {
     var loadingModal = new bootstrap.Modal(document.getElementById('loadingModal'));
     loadingModal.show();

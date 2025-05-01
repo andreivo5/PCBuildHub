@@ -89,12 +89,26 @@
         <tbody>
           {% for label, value in specs.items %}
           <tr>
-            <th class="spec-label text-start">{{ label }}</th>
+            <th class="spec-label text-start">
+              {{ label }}
+              {% for key, tip in tooltips.items %}
+                {% if key == label %}
+                  <span tabindex="0"
+                        data-bs-toggle="popover"
+                        data-bs-trigger="focus"
+                        title="{{ label }}"
+                        data-bs-content="{{ tip }}">
+                    <i class="bi bi-info-circle-fill text-info" style="cursor: pointer;"></i>
+                  </span>
+                {% endif %}
+              {% endfor %}
+            </th>
             <td class="spec-value text-start">{{ value }}</td>
           </tr>
           {% endfor %}
         </tbody>
       </table>
+    </div>
 
       {% if build %}
       <form method="post" action="{% url 'select_component' component_type build.id component.id %}">
@@ -151,4 +165,14 @@
     {% endif %}
   </div>
 </div>
+{% endblock %}
+{% block extra_js %}
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
+    popoverTriggerList.forEach(function (el) {
+      new bootstrap.Popover(el)
+    })
+  });
+</script>
 {% endblock %}

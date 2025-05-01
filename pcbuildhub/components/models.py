@@ -2,22 +2,21 @@ from django.db import models
 from django.contrib.postgres.fields import JSONField
 
 class CPU(models.Model):
-    name = models.CharField(max_length=255)
-    image = models.URLField(max_length=500, null=True, blank=True)
-    url = models.URLField(max_length=500, null=True, blank=True)
-    brand = models.CharField(max_length=50)
-    socket = models.CharField(max_length=100)
-    core_count = models.IntegerField()
-    core_clock = models.FloatField(null=True, blank=True)  
-    boost_clock = models.FloatField(null=True, blank=True)  
-    smt = models.BooleanField(default=False)
-    graphics = models.CharField(max_length=100, null=True, blank=True)
-    series = models.CharField(max_length=100, null=True, blank=True)
-    model = models.CharField(max_length=100)
-    cpu_mark = models.IntegerField(null=True, blank=True)
-    thread_mark = models.IntegerField(null=True, blank=True)
-    tdp = models.IntegerField(null=True, blank=True)
+    name = models.CharField(max_length=255, verbose_name="Name")
+    core_count = models.IntegerField(verbose_name="Core Count")
+    core_clock = models.FloatField(null=True, blank=True, verbose_name="Base Clock (GHz)")
+    boost_clock = models.FloatField(null=True, blank=True, verbose_name="Boost Clock (GHz)")
+    tdp = models.IntegerField(null=True, blank=True, verbose_name="TDP (W)")
+    graphics = models.CharField(max_length=100, null=True, blank=True, verbose_name="Integrated Graphics")
+    smt = models.BooleanField(default=False, verbose_name="Simultaneous Multithreading (SMT)")
+    brand = models.CharField(max_length=50, verbose_name="Brand")
+    series = models.CharField(max_length=100, null=True, blank=True, verbose_name="Series")
+    model = models.CharField(max_length=100, verbose_name="Model")
+    cpu_mark = models.IntegerField(null=True, blank=True, verbose_name="PassMark CPU Mark")
+    thread_mark = models.IntegerField(null=True, blank=True, verbose_name="PassMark Thread Mark")
+    socket = models.CharField(max_length=100, verbose_name="Socket")
     offers = models.JSONField(null=True, blank=True)
+    image = models.URLField(max_length=500, null=True, blank=True)
 
     class Meta:
         verbose_name = "CPU"
@@ -38,17 +37,16 @@ class CPU(models.Model):
             return None
 
 class GPU(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, verbose_name="Name")
     image = models.URLField(max_length=500, null=True, blank=True)
     url = models.URLField(max_length=500, null=True, blank=True)
-    brand = models.CharField(max_length=50)
-    model = models.CharField(max_length=100)
-    vram = models.IntegerField() 
-    resolution = models.CharField(max_length=50, null=True, blank=True)
-    g3d_mark = models.FloatField(null=True, blank=True)
-    g2d_mark = models.FloatField(null=True, blank=True)
-    tdp = models.IntegerField(null=True, blank=True)
-    offers = models.JSONField(null=True, blank=True)  
+    brand = models.CharField(max_length=50, verbose_name="Brand")
+    model = models.CharField(max_length=100, verbose_name="Model")
+    vram = models.IntegerField(verbose_name="VRAM (GB)")
+    g3d_mark = models.FloatField(null=True, blank=True, verbose_name="PassMark G3D Mark")
+    g2d_mark = models.FloatField(null=True, blank=True, verbose_name="PassMark G2D Mark")
+    tdp = models.IntegerField(null=True, blank=True, verbose_name="TDP (W)")
+    offers = models.JSONField(null=True, blank=True)
 
     class Meta:
         verbose_name = "GPU"
@@ -68,7 +66,7 @@ class Case(models.Model):
     name = models.CharField(max_length=255)
     image = models.URLField(max_length=500, null=True, blank=True)
     url = models.URLField(max_length=500, null=True, blank=True)
-    size = models.CharField(max_length=50)
+    size = models.CharField(max_length=50, verbose_name="Case Size")
     offers = models.JSONField(null=True, blank=True) 
 
     class Meta:
@@ -86,11 +84,11 @@ class Case(models.Model):
             return None
 
 class Cooler(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, verbose_name="Name")
     image = models.URLField(max_length=500, null=True, blank=True)
     url = models.URLField(max_length=500, null=True, blank=True)
-    type = models.CharField(max_length=50)
-    product_code = models.CharField(max_length=50, null=True, blank=True)
+    type = models.CharField(max_length=50, verbose_name="Cooler Type")
+    product_code = models.CharField(max_length=50, null=True, blank=True, verbose_name="Product Code")
     offers = models.JSONField(null=True, blank=True)
 
     class Meta:
@@ -108,11 +106,11 @@ class Cooler(models.Model):
             return None
 
 class RAM(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, verbose_name="Name")
     image = models.URLField(max_length=500, null=True, blank=True)
     url = models.URLField(max_length=500, null=True, blank=True)
-    type = models.CharField(max_length=50)
-    size = models.IntegerField()
+    type = models.CharField(max_length=50, verbose_name="RAM Type")
+    size = models.IntegerField(verbose_name="Size (GB)")
     offers = models.JSONField(null=True, blank=True)
 
     class Meta:
@@ -130,16 +128,16 @@ class RAM(models.Model):
             return None
 
 class Motherboard(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, verbose_name="Name")
     image = models.URLField(max_length=500, null=True, blank=True)
     url = models.URLField(max_length=500, null=True, blank=True)
-    brand = models.CharField(max_length=50)
-    socket = models.CharField(max_length=50)
-    size = models.CharField(max_length=50)
-    ram_slots = models.CharField(max_length=255, null=True, blank=True)
-    ram_type = models.CharField(max_length=10, null=True, blank=True)
-    product_code = models.CharField(max_length=100, null=True, blank=True)  
-    offers = models.JSONField(null=True, blank=True)  
+    brand = models.CharField(max_length=50, verbose_name="Brand")
+    socket = models.CharField(max_length=50, verbose_name="Socket")
+    size = models.CharField(max_length=50, verbose_name="Form Factor")
+    ram_slots = models.CharField(max_length=255, null=True, blank=True, verbose_name="RAM Slots")
+    ram_type = models.CharField(max_length=10, null=True, blank=True, verbose_name="RAM Type")
+    product_code = models.CharField(max_length=100, null=True, blank=True, verbose_name="Product Code")
+    offers = models.JSONField(null=True, blank=True)
 
     class Meta:
         verbose_name = "Motherboard"
@@ -156,12 +154,12 @@ class Motherboard(models.Model):
             return None
 
 class PSU(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, verbose_name="Name")
     image = models.URLField(max_length=500, null=True, blank=True)
     url = models.URLField(max_length=500, null=True, blank=True)
-    power = models.IntegerField()
-    size = models.CharField(max_length=50)
-    offers = models.JSONField(null=True, blank=True)  
+    power = models.IntegerField(verbose_name="Wattage (W)")
+    size = models.CharField(max_length=50, verbose_name="Form Factor")
+    offers = models.JSONField(null=True, blank=True)
 
     class Meta:
         verbose_name = "Power Supply"
@@ -178,11 +176,11 @@ class PSU(models.Model):
             return None
     
 class Storage(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, verbose_name="Name")
     image = models.URLField(max_length=500, null=True, blank=True)
     url = models.URLField(max_length=500, null=True, blank=True)
-    type = models.CharField(max_length=50)
-    space = models.IntegerField()
+    type = models.CharField(max_length=50, verbose_name="Storage Type")
+    space = models.IntegerField(verbose_name="Capacity (GB)")
     offers = models.JSONField(null=True, blank=True)
 
     class Meta:

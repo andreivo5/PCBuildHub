@@ -6,7 +6,6 @@ import ast
 cpu_df = pd.read_csv("CPU.csv")
 gpu_df = pd.read_csv("GPU.csv")
 
-# Validate price presence
 def has_price(offers):
     if not isinstance(offers, str):
         return False

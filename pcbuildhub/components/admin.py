@@ -9,7 +9,7 @@ class CPUAdmin(admin.ModelAdmin):
 
 @admin.register(GPU)
 class GPUAdmin(admin.ModelAdmin):
-    list_display = ("name", "brand", "model", "vram", "resolution", "g3d_mark", "tdp")
+    list_display = ("name", "brand", "model", "vram", "g3d_mark", "tdp")
     search_fields = ("name", "brand", "model")
     list_filter = ("brand", "vram")
 

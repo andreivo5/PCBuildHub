@@ -85,21 +85,163 @@
         <tr>
           <th></th>
           {% if component_name == "Gpu" %}
-            <th>Name</th><th>Model</th><th>VRAM</th><th>TDP</th><th>G3D Mark</th><th>Price</th>
+            <th>Name</th>
+            <th>
+              Model
+              <span tabindex="0" data-bs-toggle="popover" data-bs-trigger="focus" title="GPU Model"
+                    data-bs-content="The specific variant of the graphics card, useful when comparing similar cards.">
+                <i class="bi bi-info-circle-fill text-info" style="cursor: pointer;"></i>
+              </span>
+            </th>
+            <th>
+              VRAM
+              <span tabindex="0" data-bs-toggle="popover" data-bs-trigger="focus" title="Video Memory (VRAM)"
+                    data-bs-content="The amount of memory on the GPU. Higher VRAM helps with high-res textures and gaming at 1440p or 4K.">
+                <i class="bi bi-info-circle-fill text-info" style="cursor: pointer;"></i>
+              </span>
+            </th>
+            <th>
+              TDP
+              <span tabindex="0" data-bs-toggle="popover" data-bs-trigger="focus" title="Thermal Design Power"
+                    data-bs-content="The power consumption under load. Important when choosing a PSU.">
+                <i class="bi bi-info-circle-fill text-info" style="cursor: pointer;"></i>
+              </span>
+            </th>
+            <th>
+              G3D Mark
+              <span tabindex="0" data-bs-toggle="popover" data-bs-trigger="focus" title="PassMark G3D Mark"
+                    data-bs-content="A benchmark score from PassMark for gaming and 3D performance. Higher is better.">
+                <i class="bi bi-info-circle-fill text-info" style="cursor: pointer;"></i>
+              </span>
+            </th>
+            <th>Price</th>          
           {% elif component_name == "Cpu" %}
-            <th>Name</th><th>Core Count</th><th>Speed</th><th>Socket</th><th>TDP</th><th>CPU Mark</th><th>Price</th>
+            <th>Name</th>
+            <th>
+              Core Count
+              <span tabindex="0" data-bs-toggle="popover" data-bs-trigger="focus" title="CPU Cores"
+                    data-bs-content="The number of physical cores in the CPU. More cores help with multitasking and workloads like editing.">
+                <i class="bi bi-info-circle-fill text-info" style="cursor: pointer;"></i>
+              </span>
+            </th>
+            <th>
+              Speed
+              <span tabindex="0" data-bs-toggle="popover" data-bs-trigger="focus" title="Base Clock Speed"
+                    data-bs-content="Measured in GHz, it shows how fast each core runs. Higher speeds help with general responsiveness.">
+                <i class="bi bi-info-circle-fill text-info" style="cursor: pointer;"></i>
+              </span>
+            </th>
+            <th>
+              Socket
+              <span tabindex="0" data-bs-toggle="popover" data-bs-trigger="focus" title="CPU Socket"
+                    data-bs-content="The physical CPU connector. Must match your motherboard socket to be compatible.">
+                <i class="bi bi-info-circle-fill text-info" style="cursor: pointer;"></i>
+              </span>
+            </th>
+            <th>TDP</th>
+            <th>
+              CPU Mark
+              <span tabindex="0" data-bs-toggle="popover" data-bs-trigger="focus" title="PassMark CPU Mark"
+                    data-bs-content="A benchmark score from PassMark. Good for comparing general processing power.">
+                <i class="bi bi-info-circle-fill text-info" style="cursor: pointer;"></i>
+              </span>
+            </th>      
+            <th>Price</th>      
           {% elif component_name == "Motherboard" %}
-            <th>Name</th><th>Socket</th><th>Size</th><th>RAM Type</th><th>Price</th>
+            <th>Name</th>
+            <th>
+              Socket
+              <span tabindex="0" data-bs-toggle="popover" data-bs-trigger="focus" title="CPU Socket Type"
+                    data-bs-content="The type of CPU connection it supports. Must match your CPU.">
+                <i class="bi bi-info-circle-fill text-info" style="cursor: pointer;"></i>
+              </span>
+            </th>
+            <th>
+              Size
+              <span tabindex="0" data-bs-toggle="popover" data-bs-trigger="focus" title="Form Factor"
+                    data-bs-content="The physical size (ATX, MicroATX, etc). Determines case compatibility.">
+                <i class="bi bi-info-circle-fill text-info" style="cursor: pointer;"></i>
+              </span>
+            </th>
+            <th>
+              RAM Type
+              <span tabindex="0" data-bs-toggle="popover" data-bs-trigger="focus" title="Memory Support"
+                    data-bs-content="The type of RAM supported, such as DDR4 or DDR5. Must match your RAM.">
+                <i class="bi bi-info-circle-fill text-info" style="cursor: pointer;"></i>
+              </span>
+            </th>    
+            <th>Price</th>       
           {% elif component_name == "Ram" %}
-            <th>Name</th><th>Type</th><th>Size</th><th>Price</th>
+            <th>Name</th>
+            <th>
+              Type
+              <span tabindex="0" data-bs-toggle="popover" data-bs-trigger="focus" title="RAM Type"
+                    data-bs-content="e.g. DDR4 or DDR5. Must match what your motherboard supports.">
+                <i class="bi bi-info-circle-fill text-info" style="cursor: pointer;"></i>
+              </span>
+            </th>
+            <th>
+              Size
+              <span tabindex="0" data-bs-toggle="popover" data-bs-trigger="focus" title="RAM Size"
+                    data-bs-content="Total memory capacity in GB. More RAM helps with multitasking and larger applications.">
+                <i class="bi bi-info-circle-fill text-info" style="cursor: pointer;"></i>
+              </span>
+            </th>  
+            <th>Price</th>          
           {% elif component_name == "Storage" %}
-            <th>Name</th><th>Size</th><th>Type</th><th>Price</th>
+            <th>Name</th>
+            <th>
+              Size
+              <span tabindex="0" data-bs-toggle="popover" data-bs-trigger="focus" title="Storage Capacity"
+                    data-bs-content="Amount of available space, measured in GB or TB. Choose based on your needs for games and files.">
+                <i class="bi bi-info-circle-fill text-info" style="cursor: pointer;"></i>
+              </span>
+            </th>
+            <th>
+              Type
+              <span tabindex="0" data-bs-toggle="popover" data-bs-trigger="focus" title="Drive Type"
+                    data-bs-content="e.g. NVMe, SATA SSD, or HDD. NVMe is fastest, HDD is slowest.">
+                <i class="bi bi-info-circle-fill text-info" style="cursor: pointer;"></i>
+              </span>
+            </th>          
+            <th>Price</th>  
           {% elif component_name == "Psu" %}
-            <th>Name</th><th>Size</th><th>Power</th><th>Price</th>
+            <th>Name</th>
+            <th>
+              Size
+              <span tabindex="0" data-bs-toggle="popover" data-bs-trigger="focus" title="Form Factor"
+                    data-bs-content="Usually ATX. Must fit your PC case.">
+                <i class="bi bi-info-circle-fill text-info" style="cursor: pointer;"></i>
+              </span>
+            </th>
+            <th>
+              Power
+              <span tabindex="0" data-bs-toggle="popover" data-bs-trigger="focus" title="Wattage"
+                    data-bs-content="The total power output. Should be higher than your PC's total power draw.">
+                <i class="bi bi-info-circle-fill text-info" style="cursor: pointer;"></i>
+              </span>
+            </th>   
+            <th>Price</th>         
           {% elif component_name == "Case" %}
-            <th>Name</th><th>Size</th><th>Price</th>
+            <th>Name</th>
+            <th>
+              Size
+              <span tabindex="0" data-bs-toggle="popover" data-bs-trigger="focus" title="Case Form Factor"
+                    data-bs-content="Determines what motherboard sizes and PSU types it supports.">
+                <i class="bi bi-info-circle-fill text-info" style="cursor: pointer;"></i>
+              </span>
+            </th>   
+            <th>Price</th>         
           {% elif component_name == "Cooler" %}
-            <th>Name</th><th>Type</th><th>Price</th>
+            <th>Name</th>
+            <th>
+              Type
+              <span tabindex="0" data-bs-toggle="popover" data-bs-trigger="focus" title="Cooler Type"
+                    data-bs-content="Air or liquid cooling. Liquid is quieter and more efficient, but costlier.">
+                <i class="bi bi-info-circle-fill text-info" style="cursor: pointer;"></i>
+              </span>
+            </th>   
+            <th>Price</th>         
           {% else %}
             <th>Name</th>
           {% endif %}
@@ -182,4 +324,14 @@
     {% endif %}
   </div>
 </div>
+{% endblock %}
+{% block extra_js %}
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
+    popoverTriggerList.forEach(function (el) {
+      new bootstrap.Popover(el)
+    })
+  });
+</script>
 {% endblock %}
